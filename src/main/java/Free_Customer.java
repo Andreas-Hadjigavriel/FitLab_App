@@ -1,4 +1,4 @@
-/* test */
+/* testing */
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
