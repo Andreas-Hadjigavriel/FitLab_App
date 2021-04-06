@@ -138,6 +138,11 @@ public class C_History_List extends javax.swing.JFrame {
         sendToEmail.setForeground(new java.awt.Color(255, 255, 255));
         sendToEmail.setText("Send to Email");
         sendToEmail.setBorderPainted(false);
+        sendToEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendToEmailActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -206,6 +211,15 @@ public class C_History_List extends javax.swing.JFrame {
     private void exportPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPDFActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_exportPDFActionPerformed
+
+    private void sendToEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendToEmailActionPerformed
+        History_Send_to_Email fcs = new  History_Send_to_Email();
+        fcs.setVisible(true);
+        fcs.pack();
+        fcs.setLocationRelativeTo(null);
+        fcs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.dispose();
+    }//GEN-LAST:event_sendToEmailActionPerformed
 
     public static void main(String args[]) {
         try {
