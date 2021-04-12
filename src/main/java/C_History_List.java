@@ -108,16 +108,16 @@ public class C_History_List extends javax.swing.JFrame {
 
         historyTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Product Name", "Quantity", "Price"
+                "Product Name", "Quantity", "Price", "Order's Date "
             }
         ));
         jScrollPane1.setViewportView(historyTable);
