@@ -36,7 +36,7 @@ public class Create_Offer extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Discount:");
+        jLabel3.setText("Discount (%):");
 
         submitOffer.setBackground(new java.awt.Color(0, 153, 153));
         submitOffer.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
