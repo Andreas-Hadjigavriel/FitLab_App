@@ -204,6 +204,7 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
               JOptionPane.showMessageDialog(null, "Successfully Added To Favourites");  
             }
             else {
+                
                 JOptionPane.showMessageDialog(null, "This item does not exist");
             }
         }
