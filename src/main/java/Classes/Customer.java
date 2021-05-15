@@ -16,6 +16,14 @@ public class Customer {
         this.password = password;
         this.member = member;
     }
+    
+    public String getEmail(){
+        return email;
+    }
+    
+    public String getPassword(){
+        return password;
+    }
 }
 
     
