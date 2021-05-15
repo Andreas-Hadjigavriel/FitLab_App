@@ -1,13 +1,16 @@
 
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class C_History_List extends javax.swing.JFrame {
 
     public C_History_List() {
         initComponents();
     }
-
+    
+    // insert data from orders_history to table 
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -209,7 +212,16 @@ public class C_History_List extends javax.swing.JFrame {
     }//GEN-LAST:event_backToOrderActionPerformed
 
     private void exportPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPDFActionPerformed
-        // TODO add your handling code here:
+        
+        String listC = null;
+        
+        //check if list is not empty 
+        if (listC != null ){
+            // download the table list in pdf
+        } else {
+            // if list is orders_List is empty then show error message
+            JOptionPane.showMessageDialog(null,"History List does not exists");
+        }
     }//GEN-LAST:event_exportPDFActionPerformed
 
     private void sendToEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendToEmailActionPerformed
