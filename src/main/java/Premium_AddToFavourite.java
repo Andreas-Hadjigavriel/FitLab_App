@@ -189,7 +189,25 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
 
     private void submitFavouriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitFavouriteActionPerformed
         String Productname = productName.getText();
-        JOptionPane.showMessageDialog(null, "Successfully Added To Favourites");
+        try {
+            String sql = "SELECT * FROM Products where name = ?" ; 
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, productName.getText()); 
+            rs = pst.executeQuery();
+            
+            if(rs.next()) {
+                String sql = "INSERT INTO FavouriteProducts VALUE (?) ";
+                pst = conn.prepareStatement(sql);
+                pst.setString(1,productName.getText());
+                pst.execute();    
+                
+              JOptionPane.showMessageDialog(null, "Successfully Added To Favourites");  
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "This item does not exist");
+            }
+        }
+        
     }//GEN-LAST:event_submitFavouriteActionPerformed
 
     public static void main(String args[]) {
