@@ -1,13 +1,24 @@
-
-
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import java.lang.Object;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+
 
 public class Free_C_Checkout_List extends javax.swing.JFrame {
 
     public Free_C_Checkout_List() {
         initComponents();
     }
-
+   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -20,8 +31,8 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
         log_out = new javax.swing.JButton();
         backToOrder = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        checkoutTable = new javax.swing.JTable();
+        buy_now_btn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -105,24 +116,29 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        checkoutTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Product Name", "Quantity", "Price"
+                "Product ID", "Product Name", "Quantity", "Price"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(checkoutTable);
 
-        jButton1.setBackground(new java.awt.Color(153, 153, 0));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Buy Now");
-        jButton1.setBorderPainted(false);
+        buy_now_btn.setBackground(new java.awt.Color(153, 153, 0));
+        buy_now_btn.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        buy_now_btn.setForeground(new java.awt.Color(255, 255, 255));
+        buy_now_btn.setText("Buy Now");
+        buy_now_btn.setBorderPainted(false);
+        buy_now_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buy_now_btnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -137,7 +153,7 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addComponent(backToOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(54, 54, 54)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(buy_now_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -149,7 +165,7 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(backToOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(buy_now_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
@@ -167,6 +183,19 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // display data on table from Free_C_Store
+    Free_C_Store fcs = new Free_C_Store();
+    String checkTable[] = {productid.getText(), productname.getText(), productquantity.getText(), productprice.getText()}; 
+    DefaultTableModel tableModel = (DefaultTableModel)checkoutTable.getModel();
+    // add string array data
+    tableModel.addRow(checkTable);
+    // clear textField for new entry
+    productid.setText("");
+    productname.setText("");
+    productquantity.setText("");
+    productprice.setText("");
+    
+            
     private void log_outActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_log_outActionPerformed
         Main_Class mc= new  Main_Class();
         mc.setVisible(true);
@@ -184,8 +213,69 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
         fcs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.dispose();
     }//GEN-LAST:event_backToOrderActionPerformed
+      
+    private void buy_now_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buy_now_btnActionPerformed
+        // store checkout list/table data INSERT into Order's Table in DB
+        Integer product_id = (Integer)model.getValueAt(0,0);
+        //Integer product_id = productid.getInt();
+        String product_name = (String)model.getValueAt(0,1);
+        Integer product_quantity = (Integer)model.getValueAt(0,2);
+        Double product_price = (Double)model.getValueAt(0,3);    
 
+        PreparedStatement st;
+        String query = "INSERT INTO Orders (product_id, product_name, product_quantity, product_price) VALUES(?, ?, ?, ?)";
+        try {                
+                st = MyConnection.getConnection().prepareStatement(query);
+                
+                st.setString(1, product_id);
+                st.setString(2, product_name);
+                st.setString(3, product_quantity);
+                st.setString(4, product_price);
+                
 
+                if(st.executeUpdate() > 0)
+                {
+                    String Member = null;
+   
+                 try{
+                       String myDriver ="com.mysql.jdbc.Driver";
+                       String myurl ="jdbc:mysql://localhost:3306/fitlab_application?zeroDateTimeBehavior=convertToNull";
+                        try {
+                            Class.forName(myDriver);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                         try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
+
+                            String query1  = "SELECT email, password, member FROM customers WHERE email= ?";
+
+                            PreparedStatement st1 = conn.prepareStatement(query1);
+                            ResultSet res = st1.executeQuery();
+
+                            while(res.next()){
+                                Member = res.getString("member");
+                            }   
+
+                         conn.close();     
+                     }
+                 } catch(SQLException e){System.out.println(e); } 
+                  if(Member == "Free"){       
+                  // use case 2 -> check if the customer is FREE Customer
+                    JOptionPane.showMessageDialog(null,"Your order has been received");
+                    }
+                  else if (Member == "Premium"){
+                      // calculate points of premium
+                  }
+                }
+            
+        }   catch (SQLException ex) {
+                Logger.getLogger(sign_up.class.getName()).log(Level.SEVERE, null, ex);
+         }            
+    }//GEN-LAST:event_buy_now_btnActionPerformed
+   
+    
+    
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -220,14 +310,14 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backToOrder;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton buy_now_btn;
+    private javax.swing.JTable checkoutTable;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JButton log_out;
     // End of variables declaration//GEN-END:variables
 }
