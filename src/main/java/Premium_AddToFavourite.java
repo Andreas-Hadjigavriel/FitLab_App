@@ -189,6 +189,7 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
 
     private void submitFavouriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitFavouriteActionPerformed
         String Productname = productName.getText();
+        
         try {
             String sql = "SELECT * FROM Products where name = ?" ; 
             pst = conn.prepareStatement(sql);
@@ -200,7 +201,7 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
                 pst = conn.prepareStatement(sql);
                 pst.setString(1,productName.getText());
                 pst.execute();    
-                
+               
               JOptionPane.showMessageDialog(null, "Successfully Added To Favourites");  
             }
             else {
