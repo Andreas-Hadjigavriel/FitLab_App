@@ -1,6 +1,10 @@
 
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Edit_Store extends javax.swing.JFrame {
 
@@ -24,13 +28,13 @@ public class Edit_Store extends javax.swing.JFrame {
         addPR = new javax.swing.JButton();
         updatePR = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        ProductName = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        Price = new javax.swing.JTextField();
+        Quantity = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        ID = new javax.swing.JTextField();
         removePR = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -136,12 +140,22 @@ public class Edit_Store extends javax.swing.JFrame {
         addPR.setForeground(new java.awt.Color(255, 255, 255));
         addPR.setText("Add Product");
         addPR.setBorderPainted(false);
+        addPR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addPRActionPerformed(evt);
+            }
+        });
 
         updatePR.setBackground(new java.awt.Color(0, 204, 204));
         updatePR.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         updatePR.setForeground(new java.awt.Color(255, 255, 255));
         updatePR.setText("Update Product");
         updatePR.setBorderPainted(false);
+        updatePR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updatePRActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -164,6 +178,11 @@ public class Edit_Store extends javax.swing.JFrame {
         removePR.setForeground(new java.awt.Color(255, 255, 255));
         removePR.setText("Remove Product");
         removePR.setBorderPainted(false);
+        removePR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removePRActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -181,10 +200,10 @@ public class Edit_Store extends javax.swing.JFrame {
                             .addComponent(jLabel4))
                         .addGap(37, 37, 37)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(ProductName, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Price, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ID, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(56, 56, 56)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -193,7 +212,7 @@ public class Edit_Store extends javax.swing.JFrame {
                         .addComponent(backToAdmin, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
+                .addContainerGap(30, Short.MAX_VALUE)
                 .addComponent(addPR, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(removePR, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -210,19 +229,19 @@ public class Edit_Store extends javax.swing.JFrame {
                 .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ProductName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Price, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addPR, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,11 +256,11 @@ public class Edit_Store extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -264,6 +283,118 @@ public class Edit_Store extends javax.swing.JFrame {
         ad.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.dispose();
     }//GEN-LAST:event_backToAdminActionPerformed
+
+    private void removePRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removePRActionPerformed
+      
+       int Id  = Integer.parseInt(ID.getText());
+       String productname = ProductName.getText();
+       int quantity = Integer.parseInt(Quantity.getText());
+       float price = Float.parseFloat(Price.getText());
+       
+       PreparedStatement ps;
+        String query1 = "DELETE  FROM products  where Product_name = " + productname +";";
+        
+         String  p_name = null;
+         
+         try{
+            ps = MyConnection.getConnection().prepareStatement(query1);
+            ps.setString(1, productname);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()){
+                 p_name = rs.getString("Product_name");   
+                }
+            if(productname.equals(p_name)){
+                ps.executeQuery(query1);
+                JOptionPane.showMessageDialog(null, "Product delete Successfully");
+                 MyConnection.getConnection().close(); 
+            }else
+            {JOptionPane.showMessageDialog(null,"Product doesnt exist already");
+            }    
+         }catch (SQLException e){e.printStackTrace();}  
+
+       
+    }//GEN-LAST:event_removePRActionPerformed
+
+    private void addPRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPRActionPerformed
+       int Id  = Integer.parseInt(ID.getText());
+       String productname = ProductName.getText();
+       int quantity = Integer.parseInt(Quantity.getText());
+       float price = Float.parseFloat(Price.getText());
+       
+       
+        PreparedStatement ps,t;
+        String query1 = "SELECT Product_name FROM products where Product_name=?";
+        
+         String  p_name = null;
+         
+         try{
+            ps = MyConnection.getConnection().prepareStatement(query1);
+            ps.setString(1, productname);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                 p_name = rs.getString("Product_name");   
+                }
+            
+             if(!productname.equals(p_name)){
+                 String query = "INSERT INTO products (Product_Name,Quantity,Price)Values(?,?,?)";
+                 t = MyConnection.getConnection().prepareStatement(query);
+                 t.setString(1, p_name);
+                 t.setInt(2, quantity);
+                 t.setFloat(3, price);
+                 int count = t.executeUpdate();
+                 if(count > 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Product Add Successfully");
+                }
+                 MyConnection.getConnection().close(); 
+            }else{
+                JOptionPane.showMessageDialog(null,"Product exist already");
+                }    
+         }catch (SQLException e){e.printStackTrace();}  
+       
+       
+        
+    }//GEN-LAST:event_addPRActionPerformed
+
+    private void updatePRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatePRActionPerformed
+       int Id  = Integer.parseInt(ID.getText());
+       String productname = ProductName.getText();
+       int quantity = Integer.parseInt(Quantity.getText());
+       float price = Float.parseFloat(Price.getText());
+       
+        PreparedStatement ps,t;
+        String query1 = "SELECT Product_name FROM products where Product_name=?";
+        
+         String  p_name = null;
+         
+         try{
+            ps = MyConnection.getConnection().prepareStatement(query1);
+            ps.setString(1, productname);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                 p_name = rs.getString("Product_name");   
+                }
+            
+             if(productname.equals(p_name)){
+                 query1 = "UPDATE products SET Product_name=?, Quantity=?, Price=? where Product_name=?";
+                 t = MyConnection.getConnection().prepareStatement(query1);
+                 t.setString(1, p_name);
+                 t.setInt (2, quantity );
+                 t.setFloat(3, price);
+                 int count = t.executeUpdate();
+                 if(count > 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Product values change Successfully");
+                }
+                 MyConnection.getConnection().close(); 
+            }else{
+                JOptionPane.showMessageDialog(null,"Products doesnt exist");
+                }    
+         }catch (SQLException e){e.printStackTrace();}  
+       
+        
+    }//GEN-LAST:event_updatePRActionPerformed
 
     public static void main(String args[]) {
 
@@ -292,6 +423,10 @@ public class Edit_Store extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField ID;
+    private javax.swing.JTextField Price;
+    private javax.swing.JTextField ProductName;
+    private javax.swing.JTextField Quantity;
     private javax.swing.JButton addPR;
     private javax.swing.JButton backToAdmin;
     private javax.swing.JLabel jLabel1;
@@ -305,10 +440,6 @@ public class Edit_Store extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JButton log_out1;
     private javax.swing.JButton removePR;
     private javax.swing.JButton updatePR;
