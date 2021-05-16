@@ -6,9 +6,9 @@ public class Offers {
 
  
     private String itemListName;
-    private Double discount;
+    private int discount;
     private Double Cost;
-    public Offers(String itemListName, Double discount,Double cost){
+    public Offers(String itemListName, int discount,Double cost){
         this.itemListName = itemListName;
         this.discount = discount;
         this.Cost = cost;
