@@ -198,7 +198,7 @@ public class Create_Offer extends javax.swing.JFrame {
         String Productname = ProductName.getText();
         int discount = Discount.getValue();
         
-         PreparedStatement st,ps,t,cost;
+         PreparedStatement st,ps,t;
         String query = "INSERT INTO prosfores (Product_Name,Discount)Values(?,?)";
         String query1 = "SELECT Product_name FROM products where Product_name=?";
         String query2 = "SELECT Product_name FROM prosfores where Product_name=?";
