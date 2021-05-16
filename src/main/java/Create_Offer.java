@@ -1,5 +1,10 @@
 
 
+import Classes.Offers;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -193,11 +198,68 @@ public class Create_Offer extends javax.swing.JFrame {
         String Productname = ProductName.getText();
         int discount = Discount.getValue();
         
-        if (Productname != null) {
-            JOptionPane.showMessageDialog(null, "Offer Added Successfully");
-        } else {
-            JOptionPane.showMessageDialog(null, "Add Offer failed");
-        }      
+         PreparedStatement st,ps,t,cost;
+        String query = "INSERT INTO prosfores (Product_Name,Discount)Values(?,?)";
+        String query1 = "SELECT Product_name FROM products where Product_name=?";
+        String query2 = "SELECT Product_name FROM prosfores where Product_name=?";
+        String query4 = "Select cost FROM products where Product_name=?";
+        
+        String  c_name = null;
+        String  p_name = null;
+        double Cost = 0;
+        
+        try{
+            ps = MyConnection.getConnection().prepareStatement(query1);
+            ps.setString(1, Productname);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                 c_name = rs.getString("Product_name");   
+                }
+            
+            ps = MyConnection.getConnection().prepareStatement(query2);
+            ResultSet rs1 = ps.executeQuery();
+            while(rs1.next()){
+                  p_name = rs1.getString("Product_name"); 
+
+                }
+            Statement stm = MyConnection.getConnection().createStatement();
+            ResultSet rs2 = stm.executeQuery(query4);
+           
+            while(rs2.next()){
+                  Cost = rs2.getDouble("cost"); 
+                }
+          
+            double newcost= Offers.NewCost(discount,Cost);
+            if(Productname.equals(p_name)){
+                 query2 = "UPDATE prosfores SET discount=? ,newcost=? where Product_name=?";
+                 t = MyConnection.getConnection().prepareStatement(query2);
+                 t.setInt (1, discount );
+                 t.setString(2, p_name);
+                 t.setDouble(3, newcost);
+                 int count= t.executeUpdate();
+                 if(count > 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Offer change Successfully");
+                }
+                 MyConnection.getConnection().close(); 
+            }
+            else if(Productname.equals(c_name)){
+                st = MyConnection.getConnection().prepareStatement(query);
+                st.setString(1,Productname);
+                st.setInt(2, discount);  
+                st.setDouble(2, newcost);
+                if(st.executeUpdate() > 0)
+                {
+                     JOptionPane.showMessageDialog(null, "Offer Added Successfully");
+                }
+                MyConnection.getConnection().close();  
+               
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Products doesnt exist");
+                } 
+            
+            } catch (SQLException e){e.printStackTrace();}  
     }//GEN-LAST:event_submitOfferActionPerformed
 
     private void log_out1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_log_out1ActionPerformed
