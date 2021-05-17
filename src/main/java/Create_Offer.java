@@ -229,7 +229,7 @@ public class Create_Offer extends javax.swing.JFrame {
                   Cost = rs2.getDouble("cost"); 
                 }
           
-            double newcost= Offers.NewCost(discount,Cost);
+            double newcost= Offers.setOfferToPrem(discount,Cost);
             if(Productname.equals(p_name)){
                  query2 = "UPDATE prosfores SET discount=? ,newcost=? where Product_name=?";
                  t = MyConnection.getConnection().prepareStatement(query2);

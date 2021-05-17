@@ -14,7 +14,7 @@ public class Offers {
         this.Cost = cost;
     }
     
-      public static double  NewCost(int discount,Double cost){
+      public static double  setOfferToPrem(int discount,Double cost){
         double newCost;
         
         newCost = cost - cost*(discount/100);

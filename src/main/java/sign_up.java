@@ -286,7 +286,7 @@ public class sign_up extends javax.swing.JFrame {
         String customer_email= null;
 
         PreparedStatement st, ps;
-        String query = "INSERT INTO customers (name, surname, email, password, member) VALUES(?, ?, ?, ?, ?)";
+        String query = "INSERT INTO customers (customerId, email, username, password, sex, member) VALUES(?, ?, ?, ?, ,?, ?)";
         String query1 = "SELECT email FROM customers WHERE email=?";
 
         try {
@@ -302,10 +302,11 @@ public class sign_up extends javax.swing.JFrame {
                 st = MyConnection.getConnection().prepareStatement(query);
                 
                 st.setString(1, cust_name);
-                st.setString(2, cust_surname);
-                st.setString(3, cust_email);
-                st.setString(4, cust_password);
-                st.setString(5, cust_member);
+                st.setString(2, cust_name);
+                st.setString(3, cust_surname);
+                st.setString(4, cust_email);
+                st.setString(5, cust_password);
+                st.setString(6, cust_member);
 
                 if(st.executeUpdate() > 0)
                 {

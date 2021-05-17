@@ -1,5 +1,12 @@
 
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -188,28 +195,42 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
     }//GEN-LAST:event_backToCustomerMenu1ActionPerformed
 
     private void submitFavouriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitFavouriteActionPerformed
-        String Productname = productName.getText();
+        String productname = productName.getText();
         
         try {
-            String sql = "SELECT * FROM Products where name = ?" ; 
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, productName.getText()); 
-            rs = pst.executeQuery();
             
-            if(rs.next()) {
-                String sql = "INSERT INTO FavouriteProducts VALUE (?) ";
-                pst = conn.prepareStatement(sql);
-                pst.setString(1,productName.getText());
-                pst.execute();    
-               
-              JOptionPane.showMessageDialog(null, "Successfully Added To Favourites");  
-            }
-            else {
+          String myDriver ="com.mysql.jdbc.Driver";
+          String myurl ="jdbc:mysql://localhost:3307/fitlab_application?zeroDateTimeBehavior=convertToNull";
+           try {
+               Class.forName(myDriver);
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
+           }
+            try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
                 
-                JOptionPane.showMessageDialog(null, "This item does not exist");
+                String query1 = "SELECT * FROM products where name = ?" ; 
+                PreparedStatement pst = conn.prepareStatement(query1);
+                pst.setString(1, productName.getText()); 
+                ResultSet rs = pst.executeQuery();
+
+                if(rs.next()) {
+                    String query = "INSERT INTO favouriteProducts VALUES (?) ";
+                    PreparedStatement ps = conn.prepareStatement(query);
+                    ps.setString(1,productName.getText());
+                    ResultSet rst = ps.executeQuery();    
+
+                  JOptionPane.showMessageDialog(null, "Successfully Added To Favourites");  
+                }
+                else {
+
+                    JOptionPane.showMessageDialog(null, "This item does not exist");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Premium_AddToFavourite.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
         }
-        
+    
     }//GEN-LAST:event_submitFavouriteActionPerformed
 
     public static void main(String args[]) {
