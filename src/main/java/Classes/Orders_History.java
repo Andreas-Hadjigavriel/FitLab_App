@@ -23,4 +23,12 @@ public class Orders_History {
         
         this.itemList = new ArrayList<Product>();
     }
+    
+    public void pdfExport(File file){
+        
+    }
+    
+    public void sendEmail(String custEmail){
+        
+    }
 }

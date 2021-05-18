@@ -15,4 +15,21 @@ public class Checkout_List {
         this.price = price;
         this.Quantity = Quantity;
     }
+    
+    public Boolean confirmOrder(){
+        
+        return true;
+    }
+    
+    public void setDiscountOn(){
+        
+    }
+    
+    public Double getTotalPrice(Double Pr){
+        Double totalP;
+        // calculate total price
+        totalP = Pr; 
+        
+        return totalP;
+    }
 }

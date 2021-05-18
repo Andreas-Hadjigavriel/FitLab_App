@@ -37,11 +37,6 @@ public class Administrator {
         
     }
     
-    public Double getDiscount(){
-        
-        return discount;
-    }
-    
     public String getEmail(){
         
         return email;

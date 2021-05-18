@@ -23,4 +23,20 @@ public class Order {
         this.cost = cost;
         this.OrderDate = OrderDate;
     }        
+    
+    public void setID(){
+        
+    }
+    
+    public void setProductName(){
+        
+    }
+    
+    public void setQuantity(){
+        
+    }
+    
+    public void setPrice(){
+        
+    }
 }
