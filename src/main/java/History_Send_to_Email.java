@@ -1,4 +1,5 @@
-
+package main.java;
+import main.java.Main_Class;
 import javax.swing.JFrame;
 
 /*

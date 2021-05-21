@@ -1,5 +1,8 @@
+package main.java;
 
-
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import main.java.Main_Class;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -188,27 +191,52 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
     }//GEN-LAST:event_backToCustomerMenu1ActionPerformed
 
     private void submitFavouriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitFavouriteActionPerformed
-        String Productname = productName.getText();
-        
+         String Productname = productName.getText();
+         PreparedStatement pst,st;
+          String sql = "SELECT Product_name FROM products where Product_name=?"; 
+          String query = "SELECT id FROM products where Product_name ='"+Productname+"'"; 
+          
+          
+          String p_name = null;
+          int pid = 0;
+          
         try {
-            String sql = "SELECT * FROM Products where name = ?" ; 
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, productName.getText()); 
-            rs = pst.executeQuery();
+            pst = MyConnection.getConnection().prepareStatement(sql);
+            pst.setString(1,Productname); 
+            ResultSet rs = pst.executeQuery();
+            while(rs.next()) {
+               p_name = rs.getString("Product_name");
+            }
             
-            if(rs.next()) {
-                String sql = "INSERT INTO FavouriteProducts VALUE (?) ";
-                pst = conn.prepareStatement(sql);
-                pst.setString(1,productName.getText());
-                pst.execute();    
-               
-              JOptionPane.showMessageDialog(null, "Successfully Added To Favourites");  
+            pst = MyConnection.getConnection().prepareStatement(query);
+            ResultSet rs1 = pst.executeQuery();
+            while(rs1.next()) {
+               pid = rs1.getInt("id");
+            }
+            
+            if(Productname.equals(p_name)){
+                String query1 = "INSERT INTO favouriteProduct (fCustomerId,fproductName,fproductid) VALUES(?,?,?)";
+                 st = MyConnection.getConnection().prepareStatement(query1);
+                 st.setInt(1, pid);
+                 st.setString(2, p_name);
+                 st.setInt(3, pid);
+                 int count= st.executeUpdate();
+                 if(count > 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Favourite product add Succesfully");
+                }
+                 
+                 
             }
             else {
                 
                 JOptionPane.showMessageDialog(null, "This item does not exist");
             }
         }
+         catch(Exception e)
+    {
+        JOptionPane.showMessageDialog(null,e);
+    }
         
     }//GEN-LAST:event_submitFavouriteActionPerformed
 

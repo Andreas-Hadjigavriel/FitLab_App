@@ -1,5 +1,6 @@
+package main.java;
 
-
+import main.java.Main_Class;
 import javax.swing.JFrame;
 import java.sql.*;
 import java.sql.Connection;

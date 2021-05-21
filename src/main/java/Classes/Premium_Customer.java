@@ -22,9 +22,7 @@ public class Premium_Customer extends Customer {
         return points;
     }
     
-    public void setOffer(Offers){
-        
-    }
+    
     
     public Integer getDiscount(){
         

@@ -1,5 +1,6 @@
+package main.java;
 
-
+import main.java.Main_Class;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

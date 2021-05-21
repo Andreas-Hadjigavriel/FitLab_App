@@ -1,5 +1,6 @@
+package main.java;
 
-
+import main.java.Main_Class;
 import javax.swing.JFrame;
 
 public class Premium_C_Store extends javax.swing.JFrame {
