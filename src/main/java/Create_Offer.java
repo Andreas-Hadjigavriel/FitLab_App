@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 
 public class Create_Offer extends javax.swing.JFrame {
 
+   
+
     public Create_Offer() {
         initComponents();
     }
@@ -197,8 +199,9 @@ public class Create_Offer extends javax.swing.JFrame {
 
         String productname = ProductName.getText();
         double discount = Discount.getValue();
-        
-         PreparedStatement st,ps,t;
+
+  
+        PreparedStatement st,ps,t;
         String query = "INSERT INTO offers (discount,newcost,ProductName)" + " Values(?,?,?)";
         String query1 = "SELECT ProductName FROM products where ProductName=?";
         String query2 = "SELECT ProductName FROM offers where ProductName=?";
@@ -270,6 +273,8 @@ public class Create_Offer extends javax.swing.JFrame {
                 } 
             
             } catch (SQLException e){e.printStackTrace();}  
+   
+    
     }//GEN-LAST:event_submitOfferActionPerformed
 
     private void log_out1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_log_out1ActionPerformed
@@ -337,3 +342,4 @@ public class Create_Offer extends javax.swing.JFrame {
     private javax.swing.JButton submitOffer;
     // End of variables declaration//GEN-END:variables
 }
+

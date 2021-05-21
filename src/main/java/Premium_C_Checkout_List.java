@@ -163,6 +163,12 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
             }
         });
 
+        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -242,11 +248,38 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         // TODO add your handling code here:
+        static void applyDiscount() {
+            double total;
+            if (total >=10) {
+                total = total-10;
+            }
+            else { 
+                total = total;
+            } 
+        }
+   
+        if jCheckBox1.isSelected() {
+            try { 
+            String sql = "SELECT sum(Points) AS TotalPoints From Products HAVING sum(Points) >=100" ; 
+            pst = conn.prepareStatement(sql); 
+            rs = pst.executeQuery();
+            }
+            if(rs.next()) {
+                applyDiscount();
+            }
+            else { 
+            JOptionPane.showMessageDialog(null, "Your points are not enough, could not apply discount");
+        }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
-
+        
+        
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
 
     /**
      * @param args the command line arguments

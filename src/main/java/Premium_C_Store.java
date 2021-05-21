@@ -1,7 +1,18 @@
 package main.java;
 
 import main.java.Main_Class;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Premium_C_Store extends javax.swing.JFrame {
 
@@ -28,10 +39,10 @@ public class Premium_C_Store extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        productprice = new javax.swing.JTextField();
+        productquantity = new javax.swing.JTextField();
+        productname = new javax.swing.JTextField();
+        productid = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -201,10 +212,10 @@ public class Premium_C_Store extends javax.swing.JFrame {
                     .addComponent(jLabel4))
                 .addGap(37, 37, 37)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(productname, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(productprice, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(productquantity, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(productid, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -216,19 +227,19 @@ public class Premium_C_Store extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(productid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(productname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(productquantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(productprice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(submitOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -284,12 +295,56 @@ public class Premium_C_Store extends javax.swing.JFrame {
     }//GEN-LAST:event_historyListActionPerformed
 
     private void submitOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitOrderActionPerformed
-        Premium_C_Checkout_List pccl = new  Premium_C_Checkout_List();
-        pccl.setVisible(true);
-        pccl.pack();
-        pccl.setLocationRelativeTo(null);
-        pccl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.dispose();
+        
+        // fill the fields and submit to validate the data
+        Integer productID = Integer.parseInt(productid.getText());
+        String productName = productname.getText();
+        Integer productQuantity = Integer.parseInt(productquantity.getText());
+        Double productPrice = Double.parseDouble(productprice.getText());
+        
+        Integer correctProductID = null;
+        String correctProductName = null;
+        Integer correctProductQuantity = null;
+        Double correctProductPrice = null;
+       
+        try{
+            String myDriver ="com.mysql.jdbc.Driver";
+            String myurl ="jdbc:mysql://localhost:3306/fitlab_application?zeroDateTimeBehavior=convertToNull";
+             try {
+                 Class.forName(myDriver);
+             } catch (ClassNotFoundException ex) {
+                 Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
+             }
+              try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
+
+                  String query  = "SELECT productID, productName, productQuantity, productPrice FROM products";           
+
+                  PreparedStatement stmt = conn.prepareStatement(query);
+                  ResultSet results = stmt.executeQuery();
+
+                  while(results.next()){                    
+                      correctProductID = results.getInt("productID");
+                      correctProductName = results.getString("productName");
+                      correctProductQuantity = results.getInt("productQuantity");
+                      correctProductPrice = results.getDouble("productPrice");
+                  }   
+ 
+              conn.close();     
+         }
+         } catch(SQLException e){System.out.println(e); }
+        if (productid.getText().equals("") || productname.getText().equals("") || productquantity.getText().equals("") || productprice.getText().equals("") ){
+            // if any of these fields left blank then show error message
+            JOptionPane.showMessageDialog(this, "Please Enter All Required Data!");
+        }
+        else if(productID.equals(correctProductID) && productName.equals(correctProductName) && productQuantity.equals(correctProductQuantity) && productPrice.equals(correctProductPrice)){
+            // check if the fields is typping correctly and product is available
+            Premium_C_Checkout_List pccl = new  Premium_C_Checkout_List();
+            pccl.setVisible(true);
+            pccl.pack();
+            pccl.setLocationRelativeTo(null);
+            pccl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.dispose();          
+         }     
     }//GEN-LAST:event_submitOrderActionPerformed
 
     public static void main(String args[]) {
@@ -338,11 +393,11 @@ public class Premium_C_Store extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JButton log_out;
+    private javax.swing.JTextField productid;
+    private javax.swing.JTextField productname;
+    private javax.swing.JTextField productprice;
+    private javax.swing.JTextField productquantity;
     private javax.swing.JButton submitOrder;
     // End of variables declaration//GEN-END:variables
 }

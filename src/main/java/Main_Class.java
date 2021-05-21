@@ -204,7 +204,9 @@ public class Main_Class extends javax.swing.JFrame {
             
     try{
           String myDriver ="com.mysql.jdbc.Driver";
+
           String myurl = "jdbc:mysql://localhost:3306/gym?zeroDateTimeBehavior=convertToNull";
+
            try {
                Class.forName(myDriver);
            } catch (ClassNotFoundException ex) {
@@ -213,7 +215,7 @@ public class Main_Class extends javax.swing.JFrame {
             try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
                 
                 String query  = "SELECT email, password, member FROM customers WHERE email= ?";
-                String query1 = "SELECT email, password, member FROM admin WHERE email= ?";
+                String query1 = "SELECT email, password, member FROM administator WHERE email= ?";
                 
                 PreparedStatement st = conn.prepareStatement(query);
                 st.setString(1, cust_email);

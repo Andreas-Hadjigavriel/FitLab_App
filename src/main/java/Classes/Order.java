@@ -22,7 +22,12 @@ public class Order {
         this.quantityPerItam = quantityPerItam;
         this.cost = cost;
         this.OrderDate = OrderDate;
+
     }    
 
     
-}
+
+    }        
+    
+ 
+

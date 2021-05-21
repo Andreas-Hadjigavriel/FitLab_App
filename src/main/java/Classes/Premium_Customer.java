@@ -22,11 +22,19 @@ public class Premium_Customer extends Customer {
         return points;
     }
     
-    
-    
+
+    public void setOffer(){
+        
+    }
+
     public Integer getDiscount(){
         
         return discount;
+    }
+    
+    public void savePoints(){
+        
+      
     }
     
     
