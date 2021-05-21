@@ -6,22 +6,37 @@ import java.util.List;
 
 
 public class Product {
+    private int id;
     private String productName;
     private int quantity;
     private double price;
     
-    public Product(String productName, int quantity, double price){
+    public Product(int id,String productName, int quantity, double price){
+        this.id = id;
         this.productName = productName;
         this.quantity = quantity;
         this.price = price;
-    }
-     
-    public static double EditStore(String productName, int quantity, double price)
-    {
         
+        }
+    
+        public int getid(){
+            return id;
+        }
         
-        return 0;
-    }
+        public String getproductname(){
+            return productName;
+        }
+        
+        public int getquantity(){
+            return quantity;
+        }
+        
+        public double getprice()
+        {
+            return price;
+        }
+        
+   
 
 }
 //rr

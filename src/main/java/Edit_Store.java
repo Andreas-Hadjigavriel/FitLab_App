@@ -1,17 +1,53 @@
+package main.java;
 
-
+import Classes.Product;
+import main.java.Main_Class;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class Edit_Store extends javax.swing.JFrame {
 
     public Edit_Store() {
-        initComponents();
+        initComponents();  
+        show_products();
     }
+    
+    public ArrayList<Product> products(){
+        String query = "Select * from products";
+    ArrayList<Product> products = new ArrayList<>();
+    try{
+         Statement stm = MyConnection.getConnection().createStatement();
+          ResultSet rs = stm.executeQuery(query); 
+          Product product; 
+          while(rs.next()){
+              product = new Product(rs.getInt("productid"),rs.getString("ProductName"),rs.getInt("Quantity"),rs.getInt("cost"));
+              products.add(product);
+                }
+        }
+         catch(Exception e){
+        JOptionPane.showMessageDialog(null,e);
+    }
+    return products;
+}
 
+    public void show_products(){
+        ArrayList<Product> list = products();
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+        Object[] row = new Object[4];
+        for(int i=0;i<list.size();i++){
+            row[0] = list.get(i).getid();
+            row[1] = list.get(i).getproductname();
+            row[2] = list.get(i).getquantity();
+            row[3] = list.get(i).getprice();
+            model.addRow(row);
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -121,13 +157,7 @@ public class Edit_Store extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "ID", "Product Name", "Quantity", "Price"
@@ -160,6 +190,12 @@ public class Edit_Store extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Product Name:");
+
+        ProductName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ProductNameActionPerformed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -225,8 +261,8 @@ public class Edit_Store extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(ID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -290,22 +326,26 @@ public class Edit_Store extends javax.swing.JFrame {
        String productname = ProductName.getText();
        int quantity = Integer.parseInt(Quantity.getText());
        float price = Float.parseFloat(Price.getText());
-       
+       String  p_name = null;
        PreparedStatement ps;
-        String query1 = "DELETE  FROM products  where Product_name = " + productname +";";
+       String query = "SELECT ProductName FROM products where ProductName=?";
+       String query1 = "DELETE FROM products  where ProductName ='"+productname+"'";
         
-         String  p_name = null;
+         
          
          try{
-            ps = MyConnection.getConnection().prepareStatement(query1);
+            ps = MyConnection.getConnection().prepareStatement(query);
             ps.setString(1, productname);
             ResultSet rs = ps.executeQuery();
             
             while(rs.next()){
-                 p_name = rs.getString("Product_name");   
+                 p_name = rs.getString("ProductName");   
                 }
+            System.out.println(p_name);
+            
             if(productname.equals(p_name)){
-                ps.executeQuery(query1);
+                ps = MyConnection.getConnection().prepareStatement(query1);
+                ps.execute(query1);
                 JOptionPane.showMessageDialog(null, "Product delete Successfully");
                  MyConnection.getConnection().close(); 
             }else
@@ -320,28 +360,29 @@ public class Edit_Store extends javax.swing.JFrame {
        int Id  = Integer.parseInt(ID.getText());
        String productname = ProductName.getText();
        int quantity = Integer.parseInt(Quantity.getText());
-       float price = Float.parseFloat(Price.getText());
-       
+       double price = Double.parseDouble(Price.getText());
+        String  p_name = null;
        
         PreparedStatement ps,t;
-        String query1 = "SELECT Product_name FROM products where Product_name=?";
+        String query1 = "SELECT ProductName FROM products where ProductName=?";
         
-         String  p_name = null;
+       
          
          try{
             ps = MyConnection.getConnection().prepareStatement(query1);
             ps.setString(1, productname);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                 p_name = rs.getString("Product_name");   
+                 p_name = rs.getString("ProductName");   
                 }
             
              if(!productname.equals(p_name)){
-                 String query = "INSERT INTO products (Product_Name,Quantity,Price)Values(?,?,?)";
+                 String query = "INSERT INTO products (ProductName,cost,quantity)Values(?,?,?)";
                  t = MyConnection.getConnection().prepareStatement(query);
-                 t.setString(1, p_name);
-                 t.setInt(2, quantity);
-                 t.setFloat(3, price);
+                 t.setString(1, productname);
+                 t.setDouble(2, price);
+                 t.setInt(3, quantity);
+                
                  int count = t.executeUpdate();
                  if(count > 0)
                 {
@@ -361,10 +402,10 @@ public class Edit_Store extends javax.swing.JFrame {
        int Id  = Integer.parseInt(ID.getText());
        String productname = ProductName.getText();
        int quantity = Integer.parseInt(Quantity.getText());
-       float price = Float.parseFloat(Price.getText());
+       double price = Double.parseDouble(Price.getText());
        
         PreparedStatement ps,t;
-        String query1 = "SELECT Product_name FROM products where Product_name=?";
+        String query1 = "SELECT ProductName FROM products where ProductName=?";
         
          String  p_name = null;
          
@@ -373,15 +414,16 @@ public class Edit_Store extends javax.swing.JFrame {
             ps.setString(1, productname);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                 p_name = rs.getString("Product_name");   
+                 p_name = rs.getString("ProductName");   
                 }
             
              if(productname.equals(p_name)){
-                 query1 = "UPDATE products SET Product_name=?, Quantity=?, Price=? where Product_name=?";
+                 query1 = "UPDATE products SET ProductName =?, cost=? ,Quantity=? where productid=? ";
                  t = MyConnection.getConnection().prepareStatement(query1);
                  t.setString(1, p_name);
-                 t.setInt (2, quantity );
-                 t.setFloat(3, price);
+                 t.setDouble(2, price);
+                 t.setInt(3, quantity );
+                 t.setInt(4, Id);
                  int count = t.executeUpdate();
                  if(count > 0)
                 {
@@ -396,8 +438,12 @@ public class Edit_Store extends javax.swing.JFrame {
         
     }//GEN-LAST:event_updatePRActionPerformed
 
-    public static void main(String args[]) {
+    private void ProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProductNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ProductNameActionPerformed
 
+    public static void main(String args[]) {
+ 
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -439,7 +485,7 @@ public class Edit_Store extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    public javax.swing.JTable jTable1;
     private javax.swing.JButton log_out1;
     private javax.swing.JButton removePR;
     private javax.swing.JButton updatePR;

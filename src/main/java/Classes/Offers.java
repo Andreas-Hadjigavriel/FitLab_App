@@ -14,10 +14,11 @@ public class Offers {
         this.Cost = cost;
     }
     
-      public static double  NewCost(int discount,Double cost){
-        double newCost;
-        
-        newCost = cost - cost*(discount/100);
-        return newCost;
+      public static double  NewCost(double discount,double cost){
+        double newCost = 0; 
+        newCost = cost - (cost*(discount/100));
+        return newCost;  
     }
+
 }
+

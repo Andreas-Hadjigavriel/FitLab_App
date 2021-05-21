@@ -1,4 +1,4 @@
-
+package main.java;
 
 import Classes.Offers;
 import java.sql.PreparedStatement;
@@ -195,47 +195,57 @@ public class Create_Offer extends javax.swing.JFrame {
 
     private void submitOfferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitOfferActionPerformed
 
-        String Productname = ProductName.getText();
-        int discount = Discount.getValue();
+        String productname = ProductName.getText();
+        double discount = Discount.getValue();
         
          PreparedStatement st,ps,t;
-        String query = "INSERT INTO prosfores (Product_Name,Discount)Values(?,?)";
-        String query1 = "SELECT Product_name FROM products where Product_name=?";
-        String query2 = "SELECT Product_name FROM prosfores where Product_name=?";
-        String query4 = "Select cost FROM products where Product_name=?";
+        String query = "INSERT INTO offers (discount,newcost,ProductName)" + " Values(?,?,?)";
+        String query1 = "SELECT ProductName FROM products where ProductName=?";
+        String query2 = "SELECT ProductName FROM offers where ProductName=?";
+        String query3 = "SELECT cost FROM products where ProductName = '" +productname+ "'";
         
         String  c_name = null;
         String  p_name = null;
-        double Cost = 0;
+        double cost = 0;
         
         try{
             ps = MyConnection.getConnection().prepareStatement(query1);
-            ps.setString(1, Productname);
+            ps.setString(1,productname);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                 c_name = rs.getString("Product_name");   
+                 c_name = rs.getString("ProductName");   
                 }
             
+           
             ps = MyConnection.getConnection().prepareStatement(query2);
+            ps.setString(1,productname);
             ResultSet rs1 = ps.executeQuery();
             while(rs1.next()){
-                  p_name = rs1.getString("Product_name"); 
-
+                  p_name = rs1.getString("ProductName"); 
                 }
+          try{
             Statement stm = MyConnection.getConnection().createStatement();
-            ResultSet rs2 = stm.executeQuery(query4);
-           
+            ResultSet rs2 = stm.executeQuery(query3);              
             while(rs2.next()){
-                  Cost = rs2.getDouble("cost"); 
+                cost = rs2.getDouble("cost");
+                
                 }
-          
-            double newcost= Offers.NewCost(discount,Cost);
-            if(Productname.equals(p_name)){
-                 query2 = "UPDATE prosfores SET discount=? ,newcost=? where Product_name=?";
+          }
+           catch(Exception e)
+    {
+        JOptionPane.showMessageDialog(null,e);
+    }
+          System.out.println(cost);
+           System.out.println(discount);
+           
+           double newcost = Offers.NewCost(discount,cost);
+            System.out.println(newcost);
+            if(productname.equals(p_name)){
+                 query2 = "UPDATE offers SET discount=? ,newcost=? where ProductName=?";
                  t = MyConnection.getConnection().prepareStatement(query2);
-                 t.setInt (1, discount );
-                 t.setString(2, p_name);
-                 t.setDouble(3, newcost);
+                 t.setDouble(1, discount );
+                 t.setDouble(2, newcost );
+                 t.setString(3, p_name);
                  int count= t.executeUpdate();
                  if(count > 0)
                 {
@@ -243,11 +253,11 @@ public class Create_Offer extends javax.swing.JFrame {
                 }
                  MyConnection.getConnection().close(); 
             }
-            else if(Productname.equals(c_name)){
+            else if(productname.equals(c_name)){
                 st = MyConnection.getConnection().prepareStatement(query);
-                st.setString(1,Productname);
-                st.setInt(2, discount);  
+                st.setDouble(1, discount);  
                 st.setDouble(2, newcost);
+                st.setString(3, c_name);
                 if(st.executeUpdate() > 0)
                 {
                      JOptionPane.showMessageDialog(null, "Offer Added Successfully");
