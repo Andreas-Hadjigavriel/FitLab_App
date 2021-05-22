@@ -2,6 +2,9 @@ import Classes.Checkout_List;
 import Classes.Order;
 import Classes.Order_List;
 import Classes.Orders_History;
+package main.java;
+
+import main.java.Main_Class;
 import javax.swing.JFrame;
 import java.sql.*;
 import java.sql.Connection;

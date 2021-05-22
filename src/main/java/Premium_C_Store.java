@@ -1,3 +1,6 @@
+package main.java;
+
+import main.java.Main_Class;
 
 
 import Classes.Checkout_List;
@@ -11,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 

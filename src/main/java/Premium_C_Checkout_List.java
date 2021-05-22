@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+package main.java;
+import main.java.Main_Class;
 
 import Classes.Checkout_List;
 import java.sql.Connection;

@@ -13,8 +13,11 @@ public class Order_List {
     }
     
     public void new_list(){
+        Product name = null;
         itemList.add(name);
+        Product quantity = null;
         itemList.add(quantity);
+        Product price = null;
         itemList.add(price);
     }
     

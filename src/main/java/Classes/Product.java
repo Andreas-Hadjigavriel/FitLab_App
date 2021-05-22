@@ -6,29 +6,36 @@ import java.util.List;
 
 
 public class Product {
+    private int id;
     private String productName;
-    private String quantity;
-    private String price;
+    private int quantity;
+    private double price;
     
-    public Product(String productName, String quantity, String price){
+    public Product(int id,String productName, int quantity, double price){
+        this.id = id;
         this.productName = productName;
         this.quantity = quantity;
         this.price = price;
-    }
-     
-    public Boolean deleteProduct(Integer prid, String prName , Integer prQuantity, Double prPrice){
         
-       return true;
-    }
+        }
     
-    public Boolean addProduct(Integer prid, String prName , Integer prQuantity, Double prPrice){
+        public int getid(){
+            return id;
+        }
         
-       return true;
-    }
-    
-    public Boolean updateProduct(Integer prid, String prName , Integer prQuantity, Double prPrice){
+        public String getproductname(){
+            return productName;
+        }
         
-       return true;
-    }
-    
+        public int getquantity(){
+            return quantity;
+        }
+        
+        public double getprice()
+        {
+            return price;
+        }
+        
+   
+
 }

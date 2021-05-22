@@ -31,3 +31,20 @@ public class Order {
         cost = product_cost;
     }
 }
+    public Order(String customerName, String itemListName, String customerEmail, Integer quantityPerItam, Double cost, Date OrderDate  ){
+        this.customerName = customerName;
+        this.itemListName = itemListName;
+        this.customerEmail = customerEmail;
+        this.itemList = new ArrayList<Product>();
+        this.quantityPerItam = quantityPerItam;
+        this.cost = cost;
+        this.OrderDate = OrderDate;
+
+    }    
+
+    
+
+    }        
+    
+ 
+

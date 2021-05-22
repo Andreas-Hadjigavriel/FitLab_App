@@ -1,4 +1,4 @@
-
+package main.java;
 
 import java.sql.*;
 import javax.swing.*;
@@ -204,7 +204,9 @@ public class Main_Class extends javax.swing.JFrame {
             
     try{
           String myDriver ="com.mysql.jdbc.Driver";
-          String myurl ="jdbc:mysql://localhost:3307/fitlab_application?zeroDateTimeBehavior=convertToNull";
+
+          String myurl = "jdbc:mysql://localhost:3306/gym?zeroDateTimeBehavior=convertToNull";
+
            try {
                Class.forName(myDriver);
            } catch (ClassNotFoundException ex) {
