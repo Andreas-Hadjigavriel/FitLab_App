@@ -5,7 +5,16 @@
  */
 
 
+import Classes.Checkout_List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -38,7 +47,7 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
         backToOrder = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        buy_now_premi = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
@@ -138,11 +147,16 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        jButton1.setBackground(new java.awt.Color(153, 153, 0));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Buy Now");
-        jButton1.setBorderPainted(false);
+        buy_now_premi.setBackground(new java.awt.Color(153, 153, 0));
+        buy_now_premi.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        buy_now_premi.setForeground(new java.awt.Color(255, 255, 255));
+        buy_now_premi.setText("Buy Now");
+        buy_now_premi.setBorderPainted(false);
+        buy_now_premi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buy_now_premiActionPerformed(evt);
+            }
+        });
 
         jCheckBox1.setForeground(new java.awt.Color(255, 255, 255));
         jCheckBox1.setText("Apply Discount");
@@ -177,7 +191,7 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addComponent(backToOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(buy_now_premi, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -209,7 +223,7 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backToOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(buy_now_premi, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
@@ -280,6 +294,81 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
 
+    private void buy_now_premiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buy_now_premiActionPerformed
+        // store checkout list/table data INSERT into Order's Table in DB
+        Integer product_id = (Integer)model.getValueAt(0,0);
+        //Integer product_id = productid.getInt();
+        String product_name = (String)model.getValueAt(0,1);
+        Integer product_quantity = (Integer)model.getValueAt(0,2);
+        Double product_price = (Double)model.getValueAt(0,3);    
+        
+        PreparedStatement st;
+        String query = "INSERT INTO Orders (product_id, product_name, product_quantity, product_price) VALUES(?, ?, ?, ?)";
+        try {                
+                st = MyConnection.getConnection().prepareStatement(query);
+                
+                st.setString(1, product_id);
+                st.setString(2, product_name);
+                st.setString(3, product_quantity);
+                st.setString(4, product_price);
+                
+
+                if(st.executeUpdate() > 0)
+                {
+                    String Member = null;
+   
+                 try{
+                       String myDriver ="com.mysql.jdbc.Driver";
+                       String myurl ="jdbc:mysql://localhost:3306/fitlab_application?zeroDateTimeBehavior=convertToNull";
+                        try {
+                            Class.forName(myDriver);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                         try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
+
+                            String query1  = "SELECT email, password, member FROM customers WHERE email= ?";
+
+                            PreparedStatement st1 = conn.prepareStatement(query1);
+                            ResultSet res = st1.executeQuery();
+
+                            while(res.next()){
+                                Member = res.getString("member");
+                            }   
+
+                         conn.close();     
+                     }
+                 } catch(SQLException e){System.out.println(e); } 
+                  if(Member == "Premium"){       
+                    // use case 2 -> check if the customer is Premium Customer
+                    //order confirmation
+                    Checkout_List chkL = new Checkout_List();
+                    chkL.confirmOrder();
+                                  
+                    Administrator administrator = new Administrator();
+                    Boolean validateConfirmation = administrator.validateOrder();
+                    
+                    // if admin accept the order 
+                    if (validateConfirmation == true){
+                        
+                        Customer prCustomer = new Customer();
+                        prCustomer.calculatePoints();
+                        Integer points = prCustomer.getPoints();
+                        prCustomer.savePoints(points);
+                        
+                        JOptionPane.showMessageDialog(null,"Your order has been received");
+                    }
+                  }
+                  else{
+                      JOptionPane.showMessageDialog(null,"Error, Please try again!");
+                  }
+                }
+            
+        }   catch (SQLException ex) {
+                Logger.getLogger(sign_up.class.getName()).log(Level.SEVERE, null, ex);
+         }            
+    }//GEN-LAST:event_buy_now_premiActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -317,7 +406,7 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backToOrder;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton buy_now_premi;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JPanel jPanel3;
