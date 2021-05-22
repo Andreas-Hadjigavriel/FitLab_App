@@ -1,5 +1,9 @@
 
 
+import Classes.Checkout_List;
+import Classes.Order;
+import Classes.Order_List;
+import Classes.Orders_History;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -282,16 +286,48 @@ public class Premium_C_Store extends javax.swing.JFrame {
     }//GEN-LAST:event_historyListMouseClicked
 
     private void historyListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historyListActionPerformed
-        C_History_List chl = new  C_History_List();
-        chl.setVisible(true);
-        chl.pack();
-        chl.setLocationRelativeTo(null);
-        chl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.dispose();
+       Integer histCounter = null;
+        try{
+          String myDriver ="com.mysql.jdbc.Driver";
+          String myurl ="jdbc:mysql://localhost:3306/fitlab_application?zeroDateTimeBehavior=convertToNull";
+           try {
+               Class.forName(myDriver);
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
+           }
+            try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
+                
+                String query  = "SELECT count(*) as historyCount,orderId customerName, itemListName, itemList, buyListDate, downloadPDF FROM Orders_History";
+                
+                PreparedStatement st = conn.prepareStatement(query);
+                ResultSet rs = st.executeQuery();
+                             
+                while(rs.next()){
+                    histCounter = rs.getInt("historyCount");              
+                }   
+
+                conn.close();     
+            }
+        } catch(SQLException e){System.out.println(e); }
+        // check if history list is empty
+        if(histCounter > 0){
+            
+            Orders_History ordhistory = new Orders_History();
+            ordhistory.getOldList(orderId);
+    
+            // display history list screen
+            C_History_List chl = new  C_History_List();
+            chl.setVisible(true);
+            chl.pack();
+            chl.setLocationRelativeTo(null);
+            chl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.dispose();
+        }
     }//GEN-LAST:event_historyListActionPerformed
 
     private void submitOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitOrderActionPerformed
         
+        Boolean validAnswer = null;
         // fill the fields and submit to validate the data
         Integer productID = Integer.parseInt(productid.getText());
         String productName = productname.getText();
@@ -334,13 +370,33 @@ public class Premium_C_Store extends javax.swing.JFrame {
         }
         else if(productID.equals(correctProductID) && productName.equals(correctProductName) && productQuantity.equals(correctProductQuantity) && productPrice.equals(correctProductPrice)){
             // check if the fields is typping correctly and product is available
-            Premium_C_Checkout_List pccl = new  Premium_C_Checkout_List();
-            pccl.setVisible(true);
-            pccl.pack();
-            pccl.setLocationRelativeTo(null);
-            pccl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            this.dispose();          
-         }     
+            
+            // set an order (Order class)
+            Order order = new Order();
+            order.setID(productID);
+            order.setProductName(productName);
+            order.setQuantity(productQuantity);
+            order.setPrice(productPrice);
+        
+            Order_List ordList = new Order_List();
+            ordList.new_list();
+            validAnswer = ordList.validateList();
+            
+            if (validAnswer == true){
+                Checkout_List checkL = new Checkout_List();
+                checkL.setTotalPrice(productPrice);
+            
+                // if everything its ok procceed to checkout 
+                Premium_C_Checkout_List fccl = new  Premium_C_Checkout_List();
+                fccl.setVisible(true);
+                fccl.pack();
+                fccl.setLocationRelativeTo(null);
+                fccl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                this.dispose();    
+            } else if (validAnswer == false){
+                JOptionPane.showMessageDialog(this, "Your Order has been failed!");
+            }
+         } 
     }//GEN-LAST:event_submitOrderActionPerformed
 
     public static void main(String args[]) {
