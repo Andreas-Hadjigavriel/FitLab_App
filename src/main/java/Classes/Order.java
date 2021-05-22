@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Order {
+    private Integer productListID;
     private String customerName;
     private String itemListName;
     private String customerEmail;
@@ -14,29 +15,19 @@ public class Order {
     private Double cost;
     private Date OrderDate;
     
-    public Order(String customerName, String itemListName, String customerEmail, Integer quantityPerItam, Double cost, Date OrderDate  ){
-        this.customerName = customerName;
-        this.itemListName = itemListName;
-        this.customerEmail = customerEmail;
-        this.itemList = new ArrayList<Product>();
-        this.quantityPerItam = quantityPerItam;
-        this.cost = cost;
-        this.OrderDate = OrderDate;
-    }        
-    
-    public void setID(){
-        
+    public void setID(Integer product_id){
+        productListID = product_id;
     }
     
-    public void setProductName(){
-        
+    public void setProductName(String product_name){
+        itemListName = product_name;
     }
     
-    public void setQuantity(){
-        
+    public void setQuantity(Integer quntity){
+        quantityPerItam = quntity;
     }
     
-    public void setPrice(){
-        
+    public void setPrice(Double product_cost){  
+        cost = product_cost;
     }
 }
