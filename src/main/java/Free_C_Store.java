@@ -1,5 +1,7 @@
-
-
+import Classes.Checkout_List;
+import Classes.Order;
+import Classes.Order_List;
+import Classes.Orders_History;
 import javax.swing.JFrame;
 import java.sql.*;
 import java.sql.Connection;
@@ -13,7 +15,7 @@ public class Free_C_Store extends javax.swing.JFrame {
     public Free_C_Store() {
         initComponents();
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -277,6 +279,7 @@ public class Free_C_Store extends javax.swing.JFrame {
 
     private void submitOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitOrderActionPerformed
         
+        Boolean validAnswer = null;
         // fill the fields and submit to validate the data
         Integer productID = Integer.parseInt(productid.getText());
         String productName = productname.getText();
@@ -319,14 +322,36 @@ public class Free_C_Store extends javax.swing.JFrame {
         }
         else if(productID.equals(correctProductID) && productName.equals(correctProductName) && productQuantity.equals(correctProductQuantity) && productPrice.equals(correctProductPrice)){
             // check if the fields is typping correctly and product is available
-            Free_C_Checkout_List fccl = new  Free_C_Checkout_List();
-            fccl.setVisible(true);
-            fccl.pack();
-            fccl.setLocationRelativeTo(null);
-            fccl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            this.dispose();           
-         }
+            
+            // set an order (Order class)
+            Order order = new Order();
+            order.setID(productID);
+            order.setProductName(productName);
+            order.setQuantity(productQuantity);
+            order.setPrice(productPrice);
+        
+            Order_List ordList = new Order_List();
+            ordList.new_list();
+            validAnswer = ordList.validateList();
+            
+            if (validAnswer == true){
+                Checkout_List checkL = new Checkout_List();
+                checkL.setTotalPrice(productPrice);
+            
+                // if everything its ok procceed to checkout 
+                Free_C_Checkout_List fccl = new  Free_C_Checkout_List();
+                fccl.setVisible(true);
+                fccl.pack();
+                fccl.setLocationRelativeTo(null);
+                fccl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                this.dispose();    
+            } else if (validAnswer == false){
+                JOptionPane.showMessageDialog(this, "Your Order has been failed!");
+            }
+         } 
           
+        
+        
     }//GEN-LAST:event_submitOrderActionPerformed
 
     private void historyListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historyListActionPerformed
@@ -342,7 +367,7 @@ public class Free_C_Store extends javax.swing.JFrame {
            }
             try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
                 
-                String query  = "SELECT count(*) as historyCount, customerName, itemListName, itemList, buyListDate, downloadPDF FROM Orders_History";
+                String query  = "SELECT count(*) as historyCount,orderId customerName, itemListName, itemList, buyListDate, downloadPDF FROM Orders_History";
                 
                 PreparedStatement st = conn.prepareStatement(query);
                 ResultSet rs = st.executeQuery();
@@ -356,6 +381,10 @@ public class Free_C_Store extends javax.swing.JFrame {
         } catch(SQLException e){System.out.println(e); }
         // check if history list is empty
         if(histCounter > 0){
+            
+            Orders_History ordhistory = new Orders_History();
+            ordhistory.getOldList(orderId);
+    
             // display history list screen
             C_History_List chl = new  C_History_List();
             chl.setVisible(true);
