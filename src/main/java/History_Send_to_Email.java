@@ -1,5 +1,7 @@
 
+import Classes.Orders_History;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -203,7 +205,11 @@ public class History_Send_to_Email extends javax.swing.JFrame {
     }//GEN-LAST:event_backToOrderActionPerformed
 
     private void sendToEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendToEmailActionPerformed
-        // TODO add your handling code here:
+        String email = null;
+        Orders_History ordhistory = new Orders_History();
+        ordhistory.sendEmail(email);
+        
+        JOptionPane.showMessageDialog(this, "List has been send to your Email");
     }//GEN-LAST:event_sendToEmailActionPerformed
 
     /**
