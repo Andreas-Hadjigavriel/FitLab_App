@@ -14,21 +14,15 @@ public class Orders_History {
     private Date buyListDate;
     private File donwloadPDF;
     
-    public Orders_History (String customerName,String itemListName, String customerEmail, Date buyListDate, File donwloadPDF ){
-        this.customerName = customerName;
-        this.itemListName = itemListName;
-        this.customerEmail = customerEmail;
-        this.buyListDate = buyListDate;
-        this.donwloadPDF = donwloadPDF;
-        
-        this.itemList = new ArrayList<Product>();
-    }
-    
     public void pdfExport(File file){
         
     }
     
     public void sendEmail(String custEmail){
+        
+    }
+    
+    public void getOldList(Integer listid){
         
     }
 }
