@@ -14,6 +14,8 @@ public class Order {
     private Double cost;
     private Date OrderDate;
     
+    
+  
     public Order(String customerName, String itemListName, String customerEmail, Integer quantityPerItam, Double cost, Date OrderDate  ){
         this.customerName = customerName;
         this.itemListName = itemListName;
@@ -24,6 +26,14 @@ public class Order {
         this.OrderDate = OrderDate;
 
     }    
+    
+    public static double showtotal(){
+       
+        
+        double total = 0;
+        
+        return total;
+    }
 
     
 

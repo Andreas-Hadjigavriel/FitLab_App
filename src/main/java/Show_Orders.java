@@ -16,12 +16,13 @@ public class Show_Orders extends javax.swing.JFrame {
     public Show_Orders() {
         initComponents();
         combobox();
+        show_orders();
     }
 
     
     private void combobox(){
          PreparedStatement ps;
-     String query = "Select orderid from orders ";
+     String query = "Select orderid from orders";
     try{ 
             ps = MyConnection.getConnection().prepareStatement(query);
             ResultSet rs = ps.executeQuery(query);
@@ -30,7 +31,7 @@ public class Show_Orders extends javax.swing.JFrame {
                orders.addItem(id);
                  
                 }
-            
+              
         MyConnection.getConnection().close();
     }     
             catch (SQLException e){e.printStackTrace();} 
@@ -38,16 +39,17 @@ public class Show_Orders extends javax.swing.JFrame {
     }
     
     
-    
+ 
     public ArrayList<Product> orders(){
-        String query = "Select orderid,itemCostList,costa from orders where orderid='"+orders+"'";
+        String order = orders.getSelectedItem().toString();
+        String query = "Select * from orderdetail where orderid='"+order+"'";
     ArrayList<Product> products = new ArrayList<>();
     try{
          Statement stm = MyConnection.getConnection().createStatement();
           ResultSet rs = stm.executeQuery(query); 
           Product product; 
           while(rs.next()){
-              product = new Product(rs.getInt("ordertid"),rs.getString("ProductName"),rs.getInt("Quantity"),rs.getInt("cost"));
+              product = new Product(rs.getInt("orderid"),rs.getString("Name"),rs.getInt("quantity"),rs.getDouble("cost"));
               products.add(product);
                 }
         }
@@ -69,7 +71,6 @@ public class Show_Orders extends javax.swing.JFrame {
             model.addRow(row);
         }
     }
-    
     
     
     @SuppressWarnings("unchecked")
@@ -176,13 +177,7 @@ public class Show_Orders extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "ID", "Product Name", "Quantity", "Price"
@@ -195,12 +190,22 @@ public class Show_Orders extends javax.swing.JFrame {
         acceptBtn.setForeground(new java.awt.Color(255, 255, 255));
         acceptBtn.setText("Accept");
         acceptBtn.setBorderPainted(false);
+        acceptBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acceptBtnActionPerformed(evt);
+            }
+        });
 
         declineBtn.setBackground(new java.awt.Color(255, 51, 0));
         declineBtn.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         declineBtn.setForeground(new java.awt.Color(255, 255, 255));
         declineBtn.setText("Decline");
         declineBtn.setBorderPainted(false);
+        declineBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                declineBtnActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -304,8 +309,21 @@ public class Show_Orders extends javax.swing.JFrame {
     }//GEN-LAST:event_backToAdminActionPerformed
 
     private void ordersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ordersActionPerformed
-   
+        jTable1.setModel(new  DefaultTableModel(null,new String[]{"orderid","Name","quantity","cost"}));
+        show_orders();
+     
     }//GEN-LAST:event_ordersActionPerformed
+
+    private void acceptBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acceptBtnActionPerformed
+
+   
+    }//GEN-LAST:event_acceptBtnActionPerformed
+
+    private void declineBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_declineBtnActionPerformed
+      
+        
+        
+    }//GEN-LAST:event_declineBtnActionPerformed
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

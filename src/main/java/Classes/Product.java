@@ -1,9 +1,6 @@
 
 package Classes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class Product {
     private int id;
@@ -18,6 +15,17 @@ public class Product {
         this.price = price;
         
         }
+
+    public Product(String productName, int quantity, double price){
+        this.productName = productName;
+        this.quantity = quantity;
+        this.price = price; 
+        
+    }
+    
+   
+    
+    
     
         public int getid(){
             return id;
