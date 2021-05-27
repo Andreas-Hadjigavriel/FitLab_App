@@ -7,6 +7,7 @@ public class Order_List {
     private List<Product> itemList;
     private Boolean listValidation;
     
+    
     public Order_List(){
         this.itemList = new ArrayList<Product>();
     }
@@ -25,6 +26,13 @@ public class Order_List {
     }
     
     public Boolean validateList(){
+        Integer everythingIsOK = 0;
+        
+        if (everythingIsOK == 1){
+            listValidation = true;
+        } else {
+            listValidation = false;
+        }
         
         return listValidation;
     }

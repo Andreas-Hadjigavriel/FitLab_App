@@ -16,6 +16,10 @@ public class Customer {
         this.password = password;
         this.member = member;
     }
+
+    public Customer() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public String getEmail(){
         return email;

@@ -1,3 +1,5 @@
+
+import Classes.Checkout_List;
 package main.java;
 import main.java.Main_Class;
 import java.sql.PreparedStatement;
@@ -223,7 +225,7 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
         String product_name = (String)model.getValueAt(0,1);
         Integer product_quantity = (Integer)model.getValueAt(0,2);
         Double product_price = (Double)model.getValueAt(0,3);    
-
+        
         PreparedStatement st;
         String query = "INSERT INTO Orders (product_id, product_name, product_quantity, product_price) VALUES(?, ?, ?, ?)";
         try {                
@@ -262,11 +264,21 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
                      }
                  } catch(SQLException e){System.out.println(e); } 
                   if(Member == "Free"){       
-                  // use case 2 -> check if the customer is FREE Customer
-                    JOptionPane.showMessageDialog(null,"Your order has been received");
+                    // use case 2 -> check if the customer is FREE Customer
+                    //order confirmation
+                    Checkout_List chkL = new Checkout_List();
+                    chkL.confirmOrder();
+                                  
+                    Administrator administrator = new Administrator();
+                    Boolean validateConfirmation = administrator.validateOrder();
+                    
+                    // if admin accept the order 
+                    if (validateConfirmation == true){
+                        JOptionPane.showMessageDialog(null,"Your order has been received");
                     }
-                  else if (Member == "Premium"){
-                      // calculate points of premium
+                  }
+                  else{
+                      JOptionPane.showMessageDialog(null,"Error, Please try again!");
                   }
                 }
             

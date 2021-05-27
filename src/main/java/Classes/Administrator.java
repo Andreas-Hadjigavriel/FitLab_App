@@ -10,7 +10,6 @@ public class Administrator {
     private List<Order> orderList;
     private List<Product> productList;
     private Double discountPer;
-    private Boolean validationOrder;
     private Double discount;
     
     public Administrator(String username, String email, String password, Double discountPer){
@@ -25,9 +24,8 @@ public class Administrator {
     
     public Boolean validateOrder(){
         
-        return validationOrder;
+        return true;
     }
-    
     public List<Order> getOrder(){
         
         return orderList;

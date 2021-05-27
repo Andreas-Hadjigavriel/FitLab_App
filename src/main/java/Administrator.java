@@ -279,4 +279,8 @@ public class Administrator extends javax.swing.JFrame {
     private javax.swing.JButton log_out1;
     private javax.swing.JButton showOrders;
     // End of variables declaration//GEN-END:variables
+
+    void validateOrder() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

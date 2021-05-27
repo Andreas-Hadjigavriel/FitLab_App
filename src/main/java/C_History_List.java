@@ -1,5 +1,8 @@
 package main.java;
 
+
+import Classes.Customer;
+import Classes.Orders_History;
 import main.java.Main_Class;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -219,6 +222,9 @@ public class C_History_List extends javax.swing.JFrame {
         //check if list is not empty 
         if (listC != null ){
             // download the table list in pdf
+            Orders_History ordhistory = new Orders_History();
+            ordhistory.pdfExport();
+            
         } else {
             // if list is orders_List is empty then show error message
             JOptionPane.showMessageDialog(null,"History List does not exists");
@@ -226,12 +232,16 @@ public class C_History_List extends javax.swing.JFrame {
     }//GEN-LAST:event_exportPDFActionPerformed
 
     private void sendToEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendToEmailActionPerformed
+        
+        String email = null;
+        
         History_Send_to_Email fcs = new  History_Send_to_Email();
         fcs.setVisible(true);
         fcs.pack();
         fcs.setLocationRelativeTo(null);
         fcs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.dispose();
+        
     }//GEN-LAST:event_sendToEmailActionPerformed
 
     public static void main(String args[]) {
