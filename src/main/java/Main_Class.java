@@ -1,5 +1,6 @@
 package main.java;
 
+import Classes.Customer;
 import java.sql.*;
 import javax.swing.*;
 import java.sql.Connection;
@@ -201,7 +202,9 @@ public class Main_Class extends javax.swing.JFrame {
        String Member = null;
        String correct_pass = null;
        String correct_email = null;
-            
+       
+      Customer em = new Customer(cust_email);
+  
     try{
           String myDriver ="com.mysql.jdbc.Driver";
 

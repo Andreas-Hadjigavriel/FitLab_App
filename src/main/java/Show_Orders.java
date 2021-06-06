@@ -1,6 +1,7 @@
 package main.java;
 
 import Classes.Admin;
+import Classes.Customer;
 import Classes.Product;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,7 +43,7 @@ public class Show_Orders extends javax.swing.JFrame {
     
  
     public ArrayList<Product> orders(){
-        String order = orders.getSelectedItem().toString();
+        String   order = orders.getSelectedItem().toString();
         String query = "Select * from orderdetail where orderid='"+order+"'";
     ArrayList<Product> products = new ArrayList<>();
     try{
@@ -281,25 +282,37 @@ public class Show_Orders extends javax.swing.JFrame {
     }//GEN-LAST:event_backToAdminActionPerformed
 
     private void ordersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ordersActionPerformed
-        
         jTable1.setModel(new  DefaultTableModel(null,new String[]{"orderid","Name","quantity","cost"}));
         show_orders();
     }//GEN-LAST:event_ordersActionPerformed
 
     private void acceptBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acceptBtnActionPerformed
-        String Email = "";
-        String Emailto = "";
+        String   order = orders.getSelectedItem().toString();
+        String query = "Select  customeremail from orders where orderid='"+order+"'";
+     
+        String Email = "mixalis97@outlook.com.gr";
+        String Emailto = null;
         String password = "";
         String Subject = "Response of order";
         String Text = "We're inform you that your order has been accepted";
         
+        try{
+            Statement stm = MyConnection.getConnection().createStatement();
+          ResultSet rs = stm.executeQuery(query);  
+          while(rs.next()){
+           Emailto = "customeremail";
+                }
+        }
+         catch(Exception e){
+        JOptionPane.showMessageDialog(null,e);
+    }
    
-        String DATA =  Admin.SendEmail(Email, password, Email, Subject, Text);
+        String DATA =  Admin.SendEmail(Email, password, Emailto, Subject, Text);
         System.out.println(DATA);
         
         if(DATA.equals("true")){
              JOptionPane.showMessageDialog(this,"Email Send Successfull");
-        }
+         }
         else{
              JOptionPane.showMessageDialog(this,"Email Send failed");
         }

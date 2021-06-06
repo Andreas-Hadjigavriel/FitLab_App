@@ -5,29 +5,31 @@ package Classes;
 public class Customer {
     private String name;
     private String surname;
-    private String email;
+    private static String email;
     private String password;
     private String member;
-    
-    public Customer(String name, String surname,String email, String password, String member){
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.password = password;
-        this.member = member;
+   
+
+    public  Customer(String Email) {
+      this.email = Email;
+   
     }
 
     public Customer() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
-    
-    public String getEmail(){
-        return email;
-    }
+
+
+    public static String getEmail(){
+          
+          System.out.println(email);
+          return email; }
     
     public String getPassword(){
         return password;
     }
+
+    
 }
 
     

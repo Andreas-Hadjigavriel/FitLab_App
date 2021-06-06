@@ -1,28 +1,68 @@
-
-import Classes.Checkout_List;
 package main.java;
-import main.java.Main_Class;
+
+
+import Classes.Customer;
+import Classes.Order;
+import Classes.Order_List;
+import Classes.Product;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import main.java.Main_Class;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import java.lang.Object;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import javax.swing.table.AbstractTableModel;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import main.java.Free_C_Store;
+import main.java.MyConnection;
 
 
 public class Free_C_Checkout_List extends javax.swing.JFrame {
 
     public Free_C_Checkout_List() {
         initComponents();
+         show_products();
     }
    
+    
+    
+    
+     int orderid = Order.Orderid();
+     
+      public ArrayList<Product> products(){
+        String query = "Select * from orderdetail where orderid='" +orderid+ "'";
+    ArrayList<Product> products = new ArrayList<>();
+    try{
+         PreparedStatement stm = MyConnection.getConnection().prepareStatement(query);
+         ResultSet rs = stm.executeQuery();
+          Product product; 
+          int i = 0;
+          while(rs.next()){
+              i= i+1;
+              product = new Product(i,rs.getString("Name"),rs.getInt("quantity"),rs.getInt("cost"));
+              products.add(product);
+                }
+        }
+         catch(Exception e){
+        JOptionPane.showMessageDialog(null,e);
+    }
+    return products;
+}
+    
+    public void show_products(){
+        ArrayList<Product> list = products();
+        DefaultTableModel model = (DefaultTableModel)checkoutTable.getModel();
+        Object[] row = new Object[4];
+        for(int i=0;i<list.size();i++){
+            row[0] = list.get(i).getid();
+            row[1] = list.get(i).getproductname();
+            row[2] = list.get(i).getquantity();
+            row[3] = list.get(i).getprice();
+            model.addRow(row);
+        }
+    }
+  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -122,10 +162,7 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
 
         checkoutTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Product ID", "Product Name", "Quantity", "Price"
@@ -187,18 +224,6 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    // display data on table from Free_C_Store
-    Free_C_Store fcs = new Free_C_Store();
-    String checkTable[] = {productid.getText(), productname.getText(), productquantity.getText(), productprice.getText()}; 
-    DefaultTableModel tableModel = (DefaultTableModel)checkoutTable.getModel();
-    // add string array data
-    tableModel.addRow(checkTable);
-    // clear textField for new entry
-    productid.setText("");
-    productname.setText("");
-    productquantity.setText("");
-    productprice.setText("");
-    
             
     private void log_outActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_log_outActionPerformed
         Main_Class mc= new  Main_Class();
@@ -210,6 +235,7 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
     }//GEN-LAST:event_log_outActionPerformed
 
     private void backToOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backToOrderActionPerformed
+ 
         Free_C_Store fcs = new  Free_C_Store();
         fcs.setVisible(true);
         fcs.pack();
@@ -219,76 +245,39 @@ public class Free_C_Checkout_List extends javax.swing.JFrame {
     }//GEN-LAST:event_backToOrderActionPerformed
       
     private void buy_now_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buy_now_btnActionPerformed
-        // store checkout list/table data INSERT into Order's Table in DB
-        Integer product_id = (Integer)model.getValueAt(0,0);
-        //Integer product_id = productid.getInt();
-        String product_name = (String)model.getValueAt(0,1);
-        Integer product_quantity = (Integer)model.getValueAt(0,2);
-        Double product_price = (Double)model.getValueAt(0,3);    
+          String Email =  Customer.getEmail();
+         String name  = "";
+        System.out.println(Email); 
         
-        PreparedStatement st;
-        String query = "INSERT INTO Orders (product_id, product_name, product_quantity, product_price) VALUES(?, ?, ?, ?)";
-        try {                
-                st = MyConnection.getConnection().prepareStatement(query);
-                
-                st.setString(1, product_id);
-                st.setString(2, product_name);
-                st.setString(3, product_quantity);
-                st.setString(4, product_price);
-                
+        String query = "Select username from customers where email=' "+Email+"'";
+        
+        try{
+         PreparedStatement ps,t;
 
-                if(st.executeUpdate() > 0)
-                {
-                    String Member = null;
-   
-                 try{
-                       String myDriver ="com.mysql.jdbc.Driver";
-                       String myurl ="jdbc:mysql://localhost:3306/fitlab_application?zeroDateTimeBehavior=convertToNull";
-                        try {
-                            Class.forName(myDriver);
-                        } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                         try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
-
-                            String query1  = "SELECT email, password, member FROM customers WHERE email= ?";
-
-                            PreparedStatement st1 = conn.prepareStatement(query1);
-                            ResultSet res = st1.executeQuery();
-
-                            while(res.next()){
-                                Member = res.getString("member");
-                            }   
-
-                         conn.close();     
-                     }
-                 } catch(SQLException e){System.out.println(e); } 
-                  if(Member == "Free"){       
-                    // use case 2 -> check if the customer is FREE Customer
-                    //order confirmation
-                    Checkout_List chkL = new Checkout_List();
-                    chkL.confirmOrder();
-                                  
-                    Administrator administrator = new Administrator();
-                    Boolean validateConfirmation = administrator.validateOrder();
-                    
-                    // if admin accept the order 
-                    if (validateConfirmation == true){
-                        JOptionPane.showMessageDialog(null,"Your order has been received");
-                    }
-                  }
-                  else{
-                      JOptionPane.showMessageDialog(null,"Error, Please try again!");
-                  }
+            Statement  stm = MyConnection.getConnection().createStatement();
+            ResultSet   rs = stm.executeQuery(query);
+            while(rs.next()){
+                name = rs.getString("username");   
                 }
-            
-        }   catch (SQLException ex) {
-                Logger.getLogger(sign_up.class.getName()).log(Level.SEVERE, null, ex);
-         }            
+         
+       
+             Order_List Totalcost = new Order_List();
+             double cost = Totalcost.totalcost();
+             
+             String query1 = "INSERT INTO orders (customeremail,customerName,cost)Values(?,?,?)";
+                 t = MyConnection.getConnection().prepareStatement(query1);
+                 t.setString(1,Email);
+                 t.setString(2, name);
+                 t.setDouble(3, cost);
+
+                 int count = t.executeUpdate();
+                 if(count > 0){
+                    JOptionPane.showMessageDialog(null, "order registered Successfully");
+                    }
+                }catch (SQLException e){e.printStackTrace();}  
+        
     }//GEN-LAST:event_buy_now_btnActionPerformed
-   
-    
-    
+
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

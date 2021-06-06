@@ -6,10 +6,13 @@ import java.util.ArrayList;
 public class Order_List {
     private List<Product> itemList;
     private Boolean listValidation;
+    public double totalcost;
+
     
     
-    public Order_List(){
-        this.itemList = new ArrayList<Product>();
+    public void  Order_List(double Totalcost){
+       
+        this.totalcost= +this.totalcost+ Totalcost;
     }
     
     public void new_list(){
@@ -36,4 +39,16 @@ public class Order_List {
         
         return listValidation;
     }
+    
+    public static double productcost(double price,int quantity){
+        double cost=0;
+        
+        cost= quantity*price;
+        
+        return cost;
+    
+    }
+    
+     public  double totalcost(){return this.totalcost; }
+    
 }

@@ -1,23 +1,63 @@
-import Classes.Checkout_List;
+package main.java;
+
+import Classes.Customer;
 import Classes.Order;
 import Classes.Order_List;
-import Classes.Orders_History;
-package main.java;
+import Classes.Product;
+
 
 import main.java.Main_Class;
 import javax.swing.JFrame;
 import java.sql.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import main.java.C_History_List;
+import main.java.Free_Customer;
+import main.java.MyConnection;
 
 public class Free_C_Store extends javax.swing.JFrame {
 
+    private int i=1;
+    private int id = 0;
     public Free_C_Store() {
         initComponents();
+        show_products();
+       int  i=1;
     }
+    
+    
+    public ArrayList<Product> products(){
+        String query = "Select * from products";
+    ArrayList<Product> products = new ArrayList<>();
+    try{
+         Statement stm = MyConnection.getConnection().createStatement();
+          ResultSet rs = stm.executeQuery(query); 
+          Product product; 
+          while(rs.next()){
+              product = new Product(rs.getInt("productid"),rs.getString("ProductName"),rs.getInt("Quantity"),rs.getInt("cost"));
+              products.add(product);
+                }
+        }
+         catch(Exception e){
+        JOptionPane.showMessageDialog(null,e);
+    }
+    return products;
+}
+    
+    public void show_products(){
+        ArrayList<Product> list = products();
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+        Object[] row = new Object[4];
+        for(int i=0;i<list.size();i++){
+            row[0] = list.get(i).getid();
+            row[1] = list.get(i).getproductname();
+            row[2] = list.get(i).getquantity();
+            row[3] = list.get(i).getprice();
+            model.addRow(row);
+        }
+    }
+    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -34,14 +74,11 @@ public class Free_C_Store extends javax.swing.JFrame {
         submitOrder = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        productprice = new javax.swing.JTextField();
-        productquantity = new javax.swing.JTextField();
+        quantity = new javax.swing.JTextField();
         productname = new javax.swing.JTextField();
-        productid = new javax.swing.JTextField();
+        add = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -154,23 +191,13 @@ public class Free_C_Store extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "ID", "Product Name", "Quantity", "Price"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("ID");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -180,9 +207,12 @@ public class Free_C_Store extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Quantity:");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Price:");
+        add.setText("+");
+        add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -206,16 +236,15 @@ public class Free_C_Store extends javax.swing.JFrame {
                 .addGap(94, 94, 94)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel2))
                 .addGap(37, 37, 37)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(productname, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(productprice, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(productquantity, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(productid, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(quantity, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(add)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -223,28 +252,21 @@ public class Free_C_Store extends javax.swing.JFrame {
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(productid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(productname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(productquantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(productprice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(add))
+                .addGap(47, 47, 47)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(submitOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(historyList, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(backToCustomerMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -282,156 +304,117 @@ public class Free_C_Store extends javax.swing.JFrame {
 
     private void submitOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitOrderActionPerformed
         
-        Boolean validAnswer = null;
+        
         // fill the fields and submit to validate the data
-        Integer productID = Integer.parseInt(productid.getText());
-        String productName = productname.getText();
-        Integer productQuantity = Integer.parseInt(productquantity.getText());
-        Double productPrice = Double.parseDouble(productprice.getText());
-        
-        Integer correctProductID = null;
-        String correctProductName = null;
-        Integer correctProductQuantity = null;
-        Double correctProductPrice = null;
-       
-        try{
-            String myDriver ="com.mysql.jdbc.Driver";
-            String myurl ="jdbc:mysql://localhost:3306/fitlab_application?zeroDateTimeBehavior=convertToNull";
-             try {
-                 Class.forName(myDriver);
-             } catch (ClassNotFoundException ex) {
-                 Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
-             }
-              try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
-
-                  String query  = "SELECT productID, productName, productQuantity, productPrice FROM products";           
-
-                  PreparedStatement stmt = conn.prepareStatement(query);
-                  ResultSet results = stmt.executeQuery();
-
-                  while(results.next()){                    
-                      correctProductID = results.getInt("productID");
-                      correctProductName = results.getString("productName");
-                      correctProductQuantity = results.getInt("productQuantity");
-                      correctProductPrice = results.getDouble("productPrice");
-                  }   
- 
-              conn.close();     
-         }
-         } catch(SQLException e){System.out.println(e); }
-        if (productid.getText().equals("") || productname.getText().equals("") || productquantity.getText().equals("") || productprice.getText().equals("") ){
-            // if any of these fields left blank then show error message
-            JOptionPane.showMessageDialog(this, "Please Enter All Required Data!");
-        }
-        else if(productID.equals(correctProductID) && productName.equals(correctProductName) && productQuantity.equals(correctProductQuantity) && productPrice.equals(correctProductPrice)){
-            // check if the fields is typping correctly and product is available
-            
-            // set an order (Order class)
-            Order order = new Order();
-            order.setID(productID);
-            order.setProductName(productName);
-            order.setQuantity(productQuantity);
-            order.setPrice(productPrice);
-        
-            Order_List ordList = new Order_List();
-            ordList.new_list();
-            validAnswer = ordList.validateList();
-            
-            if (validAnswer == true){
-                Checkout_List checkL = new Checkout_List();
-                checkL.setTotalPrice(productPrice);
-            
-                // if everything its ok procceed to checkout 
-                Free_C_Checkout_List fccl = new  Free_C_Checkout_List();
-                fccl.setVisible(true);
-                fccl.pack();
-                fccl.setLocationRelativeTo(null);
-                fccl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                this.dispose();    
-            } else if (validAnswer == false){
-                JOptionPane.showMessageDialog(this, "Your Order has been failed!");
-            }
-         } 
-          
-        
+      
+                    Free_C_Checkout_List fc = new  Free_C_Checkout_List();
+                    fc.setVisible(true);
+                    fc.pack();
+                    fc.setLocationRelativeTo(null);
+                    fc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    this.dispose();
+                
+         
         
     }//GEN-LAST:event_submitOrderActionPerformed
 
     private void historyListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historyListActionPerformed
-        
-        Integer histCounter = null;
-        try{
-          String myDriver ="com.mysql.jdbc.Driver";
-          String myurl ="jdbc:mysql://localhost:3306/fitlab_application?zeroDateTimeBehavior=convertToNull";
-           try {
-               Class.forName(myDriver);
-           } catch (ClassNotFoundException ex) {
-               Logger.getLogger(Main_Class.class.getName()).log(Level.SEVERE, null, ex);
-           }
-            try (Connection conn = DriverManager.getConnection(myurl,"root","")) {
-                
-                String query  = "SELECT count(*) as historyCount,orderId customerName, itemListName, itemList, buyListDate, downloadPDF FROM Orders_History";
-                
-                PreparedStatement st = conn.prepareStatement(query);
-                ResultSet rs = st.executeQuery();
-                             
-                while(rs.next()){
-                    histCounter = rs.getInt("historyCount");              
-                }   
 
-                conn.close();     
-            }
-        } catch(SQLException e){System.out.println(e); }
-        // check if history list is empty
-        if(histCounter > 0){
-            
-            Orders_History ordhistory = new Orders_History();
-            ordhistory.getOldList(orderId);
-    
-            // display history list screen
             C_History_List chl = new  C_History_List();
             chl.setVisible(true);
             chl.pack();
             chl.setLocationRelativeTo(null);
             chl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.dispose();
-        }
-        
-       
+ 
     }//GEN-LAST:event_historyListActionPerformed
 
-    
-    
-    
-    
     private void historyListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_historyListMouseClicked
         
     }//GEN-LAST:event_historyListMouseClicked
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
+    private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
+       String Productname = productname.getText();
+       int Quantity = Integer.parseInt(quantity.getText());
+        String  p_name = null;
+        
+        double price =0;
+        PreparedStatement ps,t;
+        
+        String query = "SELECT ProductName FROM products where ProductName=?";
+        String query2 = "SELECT MAX(orderid) as maxid from orders ";
+        String query1 = "SELECT cost FROM products where ProductName='"+Productname+"'";
+        
+        
+        try{
+            ps = MyConnection.getConnection().prepareStatement(query);
+            ps.setString(1, Productname);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                 p_name = rs.getString("ProductName");   
                 }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Free_C_Store.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Free_C_Store.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Free_C_Store.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Free_C_Store.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+            
+             Statement stm = MyConnection.getConnection().createStatement();
+             ResultSet rs1 = stm.executeQuery(query1); 
+            while(rs1.next()){
+                 price = rs1.getDouble("cost");   
+                }
+            
+             MyConnection.getConnection().close();
+             
+             if (i==1){
+                stm = MyConnection.getConnection().createStatement();
+                rs = stm.executeQuery(query2);
+                while(rs.next()){
+                    id = rs.getInt("maxid"); 
+                    }
+                id = id+1;
+                i=i+1; 
+              } 
+             
+             
+             
+              Order or = new Order(id);
+             
+            
+              double cost = Order_List.productcost(price,Quantity);
+             Order_List o = new Order_List();
+             o.Order_List(cost);
+             
+             System.out.println(i);
+             System.out.println(id);
+              System.out.println(p_name);
+             System.out.println(Quantity);
+                 System.out.println(cost);     
+            
+             
+              
+             if(Productname.equals(p_name)){
+                 query = "INSERT INTO orderdetail (orderid,Name,quantity,cost)Values(?,?,?,?)";
+                 t = MyConnection.getConnection().prepareStatement(query);
+                 t.setInt(1,id);
+                 t.setString(2, p_name);
+                 t.setInt(3, Quantity );
+                 t.setDouble(4,cost);
 
+                 int count = t.executeUpdate();
+                 if(count > 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Product values change Successfully");
+                }
+                 MyConnection.getConnection().close(); 
+            }else{
+                JOptionPane.showMessageDialog(null,"Products doesnt exist");
+                }    
+         }catch (SQLException e){e.printStackTrace();}  
+       
+        
+       
+    }//GEN-LAST:event_addActionPerformed
+
+    public static void main(String args[]) {
+    
+   
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -441,13 +424,12 @@ public class Free_C_Store extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JButton add;
     private javax.swing.JButton backToCustomerMenu;
     private javax.swing.JButton historyList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -455,10 +437,8 @@ public class Free_C_Store extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton log_out;
-    private javax.swing.JTextField productid;
     private javax.swing.JTextField productname;
-    private javax.swing.JTextField productprice;
-    private javax.swing.JTextField productquantity;
+    private javax.swing.JTextField quantity;
     private javax.swing.JButton submitOrder;
     // End of variables declaration//GEN-END:variables
 }
