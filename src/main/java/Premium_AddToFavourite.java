@@ -1,6 +1,7 @@
 package main.java;
 
 
+import Classes.Customer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import main.java.Main_Class;
@@ -18,6 +19,7 @@ import javax.swing.JOptionPane;
 
 public class Premium_AddToFavourite extends javax.swing.JFrame {
 
+       private int i=0;
     public Premium_AddToFavourite() {
         initComponents();
     }
@@ -204,9 +206,12 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
 
          String Productname = productName.getText(); 
          PreparedStatement pst,st;
-          String sql = "SELECT Product_name FROM products where Product_name=?"; 
-          String query = "SELECT id FROM products where Product_name ='"+Productname+"'"; 
+          String sql = "SELECT ProductName FROM products where ProductName=?"; 
+          //String query = "SELECT id FROM products where ProductName ='"+Productname+"'"; 
+           String Email =  Customer.getEmail();
           
+          
+          String query = "SELECT customerId FROM customers where email ='"+Email+"'"; 
           
           String p_name = null;
           int pid = 0;
@@ -222,21 +227,23 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
             pst.setString(1,Productname); 
             ResultSet rs = pst.executeQuery();
             while(rs.next()) {
-               p_name = rs.getString("Product_name");
+               p_name = rs.getString("ProductName");
             }
 
-            pst = MyConnection.getConnection().prepareStatement(query);
+           pst = MyConnection.getConnection().prepareStatement(query);
             ResultSet rs1 = pst.executeQuery();
             while(rs1.next()) {
-               pid = rs1.getInt("id");
+               pid = rs1.getInt("customerid");
             }
+            System.out.println(pid);
             
             if(Productname.equals(p_name)){
+                i=i+1;
                 String query1 = "INSERT INTO favouriteProduct (fCustomerId,fproductName,fproductid) VALUES(?,?,?)";
                  st = MyConnection.getConnection().prepareStatement(query1);
                  st.setInt(1, pid);
                  st.setString(2, p_name);
-                 st.setInt(3, pid);
+                 st.setInt(3,i);
                  int count= st.executeUpdate();
                  if(count > 0)
                 {

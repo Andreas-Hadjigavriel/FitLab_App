@@ -1,19 +1,100 @@
 package main.java;
 
 
+import Classes.Admin;
 import Classes.Customer;
 import Classes.Orders_History;
+import Classes.Product;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import main.java.Main_Class;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 
 public class C_History_List extends javax.swing.JFrame {
 
     public C_History_List() {
         initComponents();
+        combobox();
     }
     
+    
+    
+    private void combobox(){
+       
+        String Email =  Customer.getEmail();
+        PreparedStatement ps;
+     String query = "Select orderid from orders where customeremail='"+Email+"'";
+    try{ 
+            ps = MyConnection.getConnection().prepareStatement(query);
+            ResultSet rs = ps.executeQuery(query);
+            while(rs.next()){
+               String id = String.valueOf(rs.getInt("orderid"));  
+               orderid.addItem(id);
+                 
+                }
+              
+            
+            
+        MyConnection.getConnection().close();
+    }     
+            catch (SQLException e){e.printStackTrace();} 
+    
+    }
+    
+    
     // insert data from orders_history to table 
+    
+    
+     public ArrayList<Product> orders(){
+        String   order = orderid.getSelectedItem().toString();
+        System.out.print(order);
+        String query = "Select * from orderdetail where orderid='"+order+"'";
+    ArrayList<Product> products = new ArrayList<>();
+    try{
+         Statement stm = MyConnection.getConnection().createStatement();
+          ResultSet rs = stm.executeQuery(query); 
+          Product product; 
+          while(rs.next()){
+              product = new Product(rs.getInt("orderid"),rs.getString("Name"),rs.getInt("quantity"),rs.getDouble("cost"));
+              products.add(product);
+                }
+        }
+         catch(Exception e){
+        JOptionPane.showMessageDialog(null,e);
+    }
+    return products;
+}
+
+    public void show_orders(){
+        ArrayList<Product> list = orders();
+        DefaultTableModel model = (DefaultTableModel)historyTable.getModel();
+        Object[] row = new Object[4];
+        for(int i=0;i<list.size();i++){
+            row[0] = list.get(i).getid();
+            row[1] = list.get(i).getproductname();
+            row[2] = list.get(i).getquantity();
+            row[3] = list.get(i).getprice();
+            model.addRow(row);
+        }
+    }
+    
+    
+    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -30,6 +111,7 @@ public class C_History_List extends javax.swing.JFrame {
         historyTable = new javax.swing.JTable();
         exportPDF = new javax.swing.JButton();
         sendToEmail = new javax.swing.JButton();
+        orderid = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -115,16 +197,10 @@ public class C_History_List extends javax.swing.JFrame {
 
         historyTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Product Name", "Quantity", "Price", "Order's Date "
+                "id", "Product Name", "Quantity", "Price"
             }
         ));
         jScrollPane1.setViewportView(historyTable);
@@ -151,6 +227,12 @@ public class C_History_List extends javax.swing.JFrame {
             }
         });
 
+        orderid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                orderidActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -167,14 +249,18 @@ public class C_History_List extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72))
+                .addGap(28, 28, 28)
+                .addComponent(orderid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(orderid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backToOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -216,33 +302,81 @@ public class C_History_List extends javax.swing.JFrame {
     }//GEN-LAST:event_backToOrderActionPerformed
 
     private void exportPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPDFActionPerformed
+        String path = "";
+        JFileChooser j = new JFileChooser();
+        j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int x = j.showSaveDialog(this);
         
-        String listC = null;
-        
-        //check if list is not empty 
-        if (listC != null ){
-            // download the table list in pdf
-            Orders_History ordhistory = new Orders_History();
-            ordhistory.pdfExport();
+        if(x==JFileChooser.APPROVE_OPTION){
             
-        } else {
-            // if list is orders_List is empty then show error message
-            JOptionPane.showMessageDialog(null,"History List does not exists");
+            path = j.getSelectedFile().getPath();
         }
+        
+        
+        Document doc =  new Document();
+        
+        try {
+            PdfWriter.getInstance(doc, new FileOutputStream(path+"Order_list"));
+            doc.open();
+            
+            PdfPTable tb1 = new PdfPTable(4);
+            
+            tb1.addCell("id");
+            tb1.addCell("Productname");
+            tb1.addCell("Quantity");
+            tb1.addCell("Price");
+            
+            for(int i=0; i <historyTable.getRowCount();i++){
+                String id = historyTable.getValueAt(i, 0).toString();
+                String name= historyTable.getValueAt(i, 1).toString();
+                String Quantity= historyTable.getValueAt(i, 2).toString();
+                String Price = historyTable.getValueAt(i, 3).toString();
+            
+                tb1.addCell(id);
+                tb1.addCell(name);
+                tb1.addCell(Quantity);
+                tb1.addCell(Price);      
+            }
+            
+            doc.add(tb1);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(C_History_List.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
+            Logger.getLogger(C_History_List.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        doc.close();
+        
+       
     }//GEN-LAST:event_exportPDFActionPerformed
 
     private void sendToEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendToEmailActionPerformed
+
         
-        String email = null;
+        String Emailto =  Customer.getEmail();
+        String Email = "mixalis97@outlook.com.gr";
+        System.out.println(Emailto);
+        String password = "";
+        String Subject = "Analytic Order ";
+        String Text = "";
         
-        History_Send_to_Email fcs = new  History_Send_to_Email();
-        fcs.setVisible(true);
-        fcs.pack();
-        fcs.setLocationRelativeTo(null);
-        fcs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.dispose();
+
+        String DATA =  Orders_History.SendEmail(Email, password, Emailto, Subject, Text);
+        System.out.println(DATA);
+        
+        if(DATA.equals("true")){
+             JOptionPane.showMessageDialog(this,"Email Send Successfull");
+         }
+        else{
+             JOptionPane.showMessageDialog(this,"Email Send failed");
+        }
         
     }//GEN-LAST:event_sendToEmailActionPerformed
+
+    private void orderidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderidActionPerformed
+
+         historyTable.setModel(new  DefaultTableModel(null,new String[]{"orderid","Name","quantity","cost"}));
+         show_orders();
+    }//GEN-LAST:event_orderidActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -280,6 +414,7 @@ public class C_History_List extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton log_out;
+    private javax.swing.JComboBox<String> orderid;
     private javax.swing.JButton sendToEmail;
     // End of variables declaration//GEN-END:variables
 }
