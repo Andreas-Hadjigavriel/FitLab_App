@@ -43,11 +43,7 @@ public class Order {
     }
 
     
-  public static double showtotal(){
-      double total=0;
-      return total;
-  }
-  
+
    public static int Orderid(){
        // System.out.print(id);
        return id;}

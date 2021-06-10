@@ -3,6 +3,7 @@ import Classes.Customer;
 import Classes.Order;
 import Classes.Order_List;
 import Classes.Product;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
       
         initComponents();
          show_products();
-        double showtotal = Order.showtotal();
+         String showtotal = Integer.toString((int) Order_List.totalcost());
+         cost.setText(showtotal);
     }
 
     
@@ -43,7 +45,7 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
           int i = 0;
           while(rs.next()){
               i= i+1;
-              product = new Product(rs.getInt(i),rs.getString("Name"),rs.getInt("quantity"),rs.getInt("cost"));
+              product = new Product(i,rs.getString("Name"),rs.getInt("quantity"),rs.getInt("cost"));
               products.add(product);
                 }
         }
@@ -145,7 +147,7 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Product Name", "Cost"
+                "ID", "Product Name", "Quantity", "Cost"
             }
         ));
         jScrollPane1.setViewportView(checkoutTable);
@@ -201,14 +203,9 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
                 .addGap(63, 63, 63)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(backToPremium, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(93, 93, 93)
-                                .addComponent(Buy, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(49, 49, 49)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(backToPremium, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(93, 93, 93)
+                        .addComponent(Buy, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(130, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,6 +215,10 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(discount, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cost, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -270,17 +271,69 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
     }//GEN-LAST:event_log_outActionPerformed
 
     private void BuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuyActionPerformed
-         String Discount = discount.getText();
+         
+         int Discount = Integer.parseInt(discount.getText());
          String Email =  Customer.getEmail();
          String name  = "";
-        System.out.println(Email); 
-        
+         int temp = 0;
+        System.out.println(Discount);
         String query = "Select username from customers where email=' "+Email+"'";
+        String query2 = "Select points from Premiumpelates where customeremail='"+Email+"'";
         
+        try{
+         PreparedStatement ps,t;
+
+            Statement  stm = MyConnection.getConnection().createStatement();
+            ResultSet   rs = stm.executeQuery(query);
+            while(rs.next()){
+                name = rs.getString("username");   
+                }
+         
+             stm = MyConnection.getConnection().createStatement();
+              ResultSet  rs1 = stm.executeQuery(query2);
+            while(rs1.next()){
+                 temp = rs1.getInt("points");
+                }
+           
+            System.out.println(temp);
+            
+             if(temp < Discount){
+                  JOptionPane.showMessageDialog(null, "Not enough points");
+             }else{
+             
+   
+             Order_List.totalpoints(Discount);
+             double total = Order_List.CostafterDiscount(Discount);
+             System.out.println(total);
+             
+             String query1 = "INSERT INTO orders (customeremail,customerName,cost)Values(?,?,?)";
+                 t = MyConnection.getConnection().prepareStatement(query1);
+                 t.setString(1,Email);
+                 t.setString(2, name);
+                 t.setDouble(3, total);
+
+                 int count = t.executeUpdate();
+                 if(count > 0){
+                    JOptionPane.showMessageDialog(null, "order registered Successfully");
+                    }
+        }
+                }catch (SQLException e){e.printStackTrace();}  
+        
+         
        
     }//GEN-LAST:event_BuyActionPerformed
 
     private void backToPremiumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backToPremiumActionPerformed
+        Order_List.totalcost = 0;
+        int id = Order.Orderid();
+        String query = "DELETE FROM orderdetail  where orderid ='"+id+"'";
+        
+        try{
+            PreparedStatement ps = MyConnection.getConnection().prepareStatement(query);
+            ps.execute(query);
+            MyConnection.getConnection().close(); 
+            }catch (SQLException e){e.printStackTrace();}   
+        
         Premium_Customer pc = new  Premium_Customer();
         pc.setVisible(true);
         pc.pack();
@@ -290,8 +343,6 @@ public class Premium_C_Checkout_List extends javax.swing.JFrame {
     }//GEN-LAST:event_backToPremiumActionPerformed
 
     private void costActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_costActionPerformed
-       
-        double showtotal = Order.showtotal();
 
     }//GEN-LAST:event_costActionPerformed
 

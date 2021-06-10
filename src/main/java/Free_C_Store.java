@@ -337,11 +337,11 @@ public class Free_C_Store extends javax.swing.JFrame {
        String Productname = productname.getText();
        int Quantity = Integer.parseInt(quantity.getText());
         String  p_name = null;
-        
+        int q = 0;
         double price =0;
         PreparedStatement ps,t;
         
-        String query = "SELECT ProductName FROM products where ProductName=?";
+        String query = "SELECT ProductName,quantity FROM products where ProductName=?";
         String query2 = "SELECT MAX(orderid) as maxid from orders ";
         String query1 = "SELECT cost FROM products where ProductName='"+Productname+"'";
         
@@ -351,7 +351,8 @@ public class Free_C_Store extends javax.swing.JFrame {
             ps.setString(1, Productname);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                 p_name = rs.getString("ProductName");   
+                 p_name = rs.getString("ProductName"); 
+                  q = rs.getInt("quantity");
                 }
             
              Statement stm = MyConnection.getConnection().createStatement();
@@ -361,7 +362,9 @@ public class Free_C_Store extends javax.swing.JFrame {
                 }
             
              MyConnection.getConnection().close();
-             
+             if( q < Quantity){
+                JOptionPane.showMessageDialog(null,"Not enough Quantity");
+            }else{
              if (i==1){
                 stm = MyConnection.getConnection().createStatement();
                 rs = stm.executeQuery(query2);
@@ -380,14 +383,7 @@ public class Free_C_Store extends javax.swing.JFrame {
               double cost = Order_List.productcost(price,Quantity);
              Order_List o = new Order_List();
              o.Order_List(cost);
-             
-             System.out.println(i);
-             System.out.println(id);
-              System.out.println(p_name);
-             System.out.println(Quantity);
-                 System.out.println(cost);     
-            
-             
+                          
               
              if(Productname.equals(p_name)){
                  query = "INSERT INTO orderdetail (orderid,Name,quantity,cost)Values(?,?,?,?)";
@@ -400,12 +396,13 @@ public class Free_C_Store extends javax.swing.JFrame {
                  int count = t.executeUpdate();
                  if(count > 0)
                 {
-                    JOptionPane.showMessageDialog(null, "Product values change Successfully");
+                    JOptionPane.showMessageDialog(null, "Product add Successfully to basket");
                 }
                  MyConnection.getConnection().close(); 
             }else{
                 JOptionPane.showMessageDialog(null,"Products doesnt exist");
-                }    
+                }  
+             }
          }catch (SQLException e){e.printStackTrace();}  
        
         

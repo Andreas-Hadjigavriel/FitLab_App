@@ -1,6 +1,5 @@
 package main.java;
 
-
 import Classes.Admin;
 import Classes.Customer;
 import Classes.Orders_History;
@@ -31,7 +30,7 @@ public class C_History_List extends javax.swing.JFrame {
         initComponents();
         combobox();
     }
-    
+    int i=1;
     
     
     private void combobox(){
@@ -43,8 +42,9 @@ public class C_History_List extends javax.swing.JFrame {
             ps = MyConnection.getConnection().prepareStatement(query);
             ResultSet rs = ps.executeQuery(query);
             while(rs.next()){
-               String id = String.valueOf(rs.getInt("orderid"));  
+               String id = String.valueOf(i);  
                orderid.addItem(id);
+               i=i+1;
                  
                 }
               
@@ -293,12 +293,24 @@ public class C_History_List extends javax.swing.JFrame {
     }//GEN-LAST:event_log_outActionPerformed
 
     private void backToOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backToOrderActionPerformed
-        Free_C_Store fcs = new  Free_C_Store();
-        fcs.setVisible(true);
-        fcs.pack();
-        fcs.setLocationRelativeTo(null);
-        fcs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.dispose();
+        String Email =  Customer.getEmail();
+        
+        if(Email.equals("andreas@gmail.com")){
+            Free_C_Store fcs = new  Free_C_Store();
+            fcs.setVisible(true);
+            fcs.pack();
+            fcs.setLocationRelativeTo(null);
+            fcs.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.dispose();
+        }else{
+            Premium_Customer pc = new  Premium_Customer();
+            pc.setVisible(true);
+            pc.pack();
+            pc.setLocationRelativeTo(null);
+            pc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.dispose();
+        }
+        
     }//GEN-LAST:event_backToOrderActionPerformed
 
     private void exportPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPDFActionPerformed
@@ -355,7 +367,7 @@ public class C_History_List extends javax.swing.JFrame {
         String Emailto =  Customer.getEmail();
         String Email = "mixalis97@outlook.com.gr";
         System.out.println(Emailto);
-        String password = "";
+        String password = "99112823mn";
         String Subject = "Analytic Order ";
         String Text = "";
         

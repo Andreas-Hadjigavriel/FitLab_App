@@ -1,17 +1,20 @@
 
 package Classes;
 
+
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.util.Properties;
+import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-//rr
+
 public class Orders_History {
     private String customerName;
     private String itemListName;
@@ -37,21 +40,20 @@ public class Orders_History {
        Properties props = new Properties();
        props.put("mail.smtp.auth",true);
        props.put("mail.smtp.starttls.enable", true);
-       props.put("mail.smtp.host","");
-       props.put("mail.smtp.port", "");
-       props.setProperty("", "");
+       props.put("mail.smtp.host","smtp.gmail.com");
+       props.put("mail.smtp.port", "587");
+       props.setProperty("mail.smtp.ssl.trust", "smtp.gmail.com");
        
        Session session = Session.getInstance(props,new javax.mail.Authenticator(){
-         
            protected PasswordAuthentication getPassword(){
-            return new PasswordAuthentication(username,password);
+            return new PasswordAuthentication(username, password);
         }
     });
         try{
             
-            MimeMessage message =  new MimeMessage(session);
+            Message message =  new MimeMessage(session);
             message.setFrom(new InternetAddress(Email));
-            message.setRecipients(MimeMessage.RecipientType.TO,
+            message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(Email));
             message.setSubject(Subject);
             message.setText(Text);

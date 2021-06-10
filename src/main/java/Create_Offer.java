@@ -202,21 +202,22 @@ public class Create_Offer extends javax.swing.JFrame {
 
   
         PreparedStatement st,ps,t;
-        String query = "INSERT INTO offers (discount,newcost,ProductName)" + " Values(?,?,?)";
-        String query1 = "SELECT ProductName FROM products where ProductName=?";
+        String query = "INSERT INTO offers (discount,quantity,cost,newcost,ProductName)" + " Values(?,?,?,?,?)";
+        String query1 = "SELECT ProductName,quantity FROM products where ProductName=?";
         String query2 = "SELECT ProductName FROM offers where ProductName=?";
         String query3 = "SELECT cost FROM products where ProductName = '" +productname+ "'";
         
         String  c_name = null;
         String  p_name = null;
         double cost = 0;
-        
+        int q=0;
         try{
             ps = MyConnection.getConnection().prepareStatement(query1);
             ps.setString(1,productname);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                 c_name = rs.getString("ProductName");   
+                 c_name = rs.getString("ProductName");  
+                 q = rs.getInt("quantity");
                 }
             
            
@@ -244,11 +245,13 @@ public class Create_Offer extends javax.swing.JFrame {
            double newcost = Offers.NewCost(discount,cost);
             System.out.println(newcost);
             if(productname.equals(p_name)){
-                 query2 = "UPDATE offers SET discount=? ,newcost=? where ProductName=?";
+                 query2 = "UPDATE offers SET discount=? ,newcost=? ,cost=? where ProductName=?";
                  t = MyConnection.getConnection().prepareStatement(query2);
                  t.setDouble(1, discount );
                  t.setDouble(2, newcost );
-                 t.setString(3, p_name);
+                 t.setDouble(3, cost);
+                 t.setString(4, p_name);
+                
                  int count= t.executeUpdate();
                  if(count > 0)
                 {
@@ -259,8 +262,11 @@ public class Create_Offer extends javax.swing.JFrame {
             else if(productname.equals(c_name)){
                 st = MyConnection.getConnection().prepareStatement(query);
                 st.setDouble(1, discount);  
-                st.setDouble(2, newcost);
-                st.setString(3, c_name);
+                st.setInt(2, q);
+                st.setDouble(3, cost);
+                st.setDouble(4, newcost);
+                st.setString(5, c_name);
+                
                 if(st.executeUpdate() > 0)
                 {
                      JOptionPane.showMessageDialog(null, "Offer Added Successfully");

@@ -28,18 +28,28 @@ public class Premium_C_Store extends javax.swing.JFrame {
         String query = "Select ProductName,cost,quantity  from products where " +
                        "not exists(Select ProductName from offers where products.ProductName = offers.ProductName)";
        
-        String query1 = "Select ProductName,newcost from offers";
+        String query1 = "Select ProductName,newcost,quantity from offers";
         
     ArrayList<Product> products = new ArrayList<>();
     try{
-         Statement stm = MyConnection.getConnection().createStatement();
-          ResultSet rs = stm.executeQuery(query); 
+       Statement  stm = MyConnection.getConnection().createStatement();
+         ResultSet  rs = stm.executeQuery(query1); 
+          Product product1; 
+          while(rs.next()){
+              product1 = new Product(i,rs.getString("ProductName"),rs.getInt("quantity"),rs.getInt("newcost"));
+              products.add(product1);
+              i=i+1;
+                }
+        
+          stm = MyConnection.getConnection().createStatement();
+           rs = stm.executeQuery(query); 
           Product product; 
           while(rs.next()){
-              product = new Product(i,rs.getString("ProductName"),rs.getInt("Quantity"),rs.getInt("cost"));
+              product = new Product(i,rs.getString("ProductName"),rs.getInt("quantity"),rs.getInt("cost"));
               products.add(product);
               i=i+1;
                 }
+           
           i=1;
         }
          catch(Exception e){
@@ -323,7 +333,12 @@ public class Premium_C_Store extends javax.swing.JFrame {
     }//GEN-LAST:event_historyListActionPerformed
 
     private void submitOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitOrderActionPerformed
-        
+        Premium_C_Checkout_List pc = new  Premium_C_Checkout_List();
+        pc.setVisible(true);
+        pc.pack();
+        pc.setLocationRelativeTo(null);
+        pc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.dispose();
        
     }//GEN-LAST:event_submitOrderActionPerformed
 
@@ -331,13 +346,13 @@ public class Premium_C_Store extends javax.swing.JFrame {
         String Productname = productname.getText();
         int Quantity = Integer.parseInt(quantity.getText());
         String  p_name = null;
-
+        int q=0;
         double price =0;
         PreparedStatement ps,t;
 
         String query = "SELECT ProductName FROM products where ProductName=?";
         String query2 = "SELECT MAX(orderid) as maxid from orders ";
-        String query1 = "SELECT cost FROM products where ProductName='"+Productname+"'";
+        String query1 = "SELECT cost,quantity FROM products where ProductName='"+Productname+"'";
 
         try{
             ps = MyConnection.getConnection().prepareStatement(query);
@@ -351,10 +366,15 @@ public class Premium_C_Store extends javax.swing.JFrame {
             ResultSet rs1 = stm.executeQuery(query1);
             while(rs1.next()){
                 price = rs1.getDouble("cost");
+                 q = rs1.getInt("quantity");
             }
 
             MyConnection.getConnection().close();
-
+           System.out.println(q);
+            System.out.println(Quantity);
+            if( q < Quantity){
+                JOptionPane.showMessageDialog(null,"Not enough Quantity");
+            }else{
             if (i==1){
                 stm = MyConnection.getConnection().createStatement();
                 rs = stm.executeQuery(query2);
@@ -388,11 +408,12 @@ public class Premium_C_Store extends javax.swing.JFrame {
                 int count = t.executeUpdate();
                 if(count > 0)
                 {
-                    JOptionPane.showMessageDialog(null, "Product values change Successfully");
+                    JOptionPane.showMessageDialog(null, "Product add Successfully to basket");
                 }
                 MyConnection.getConnection().close();
             }else{
                 JOptionPane.showMessageDialog(null,"Products doesnt exist");
+            }
             }
         }catch (SQLException e){e.printStackTrace();}
 

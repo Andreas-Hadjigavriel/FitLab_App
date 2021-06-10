@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -208,8 +209,9 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
          PreparedStatement pst,st;
           String sql = "SELECT ProductName FROM products where ProductName=?"; 
           //String query = "SELECT id FROM products where ProductName ='"+Productname+"'"; 
-           String Email =  Customer.getEmail();
-          
+          String query2= "SELECT fproductName from favouriteProduct"; 
+          String Email =  Customer.getEmail();
+          String c_name = null;
           
           String query = "SELECT customerId FROM customers where email ='"+Email+"'"; 
           
@@ -229,14 +231,23 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
             while(rs.next()) {
                p_name = rs.getString("ProductName");
             }
-
+            
+            Statement  stm = MyConnection.getConnection().createStatement();
+            ResultSet  rs2 = stm.executeQuery(query2);
+            while(rs2.next()) {
+               c_name = rs2.getString("fproductName");
+            }
+            System.out.println(c_name);
+            
            pst = MyConnection.getConnection().prepareStatement(query);
             ResultSet rs1 = pst.executeQuery();
             while(rs1.next()) {
                pid = rs1.getInt("customerid");
             }
             System.out.println(pid);
-            
+            if(Productname.equals(c_name)){
+                JOptionPane.showMessageDialog(null, "Favourite product already exist");
+            }else{
             if(Productname.equals(p_name)){
                 i=i+1;
                 String query1 = "INSERT INTO favouriteProduct (fCustomerId,fproductName,fproductid) VALUES(?,?,?)";
@@ -254,6 +265,7 @@ public class Premium_AddToFavourite extends javax.swing.JFrame {
             else{
              JOptionPane.showMessageDialog(null, "Favourite product doesnt exist");
         }
+            }
         } catch (SQLException ex) {
             Logger.getLogger(Premium_AddToFavourite.class.getName()).log(Level.SEVERE, null, ex);
         }
