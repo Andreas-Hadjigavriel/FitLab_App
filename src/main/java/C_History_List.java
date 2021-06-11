@@ -367,7 +367,7 @@ public class C_History_List extends javax.swing.JFrame {
         String Emailto =  Customer.getEmail();
         String Email = "mixalis97@outlook.com.gr";
         System.out.println(Emailto);
-        String password = "99112823mn";
+        String password = "";
         String Subject = "Analytic Order ";
         String Text = "";
         

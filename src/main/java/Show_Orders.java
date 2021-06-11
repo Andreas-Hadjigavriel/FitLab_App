@@ -291,7 +291,7 @@ public class Show_Orders extends javax.swing.JFrame {
         String query = "Select  customeremail from orders where orderid='"+order+"'";
      
         String Email = "mixalis97@outlook.com.gr";
-        String Emailto = null;
+        String Emailto =  Customer.getEmail();
         String password = "";
         String Subject = "Response of order";
         String Text = "We're inform you that your order has been accepted";
